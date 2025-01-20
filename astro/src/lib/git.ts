@@ -15,7 +15,7 @@ export const getLatestCommitTime = (path: string): Promise<Date | undefined> => 
   });
 };
 
-export const getRemoteUrl = (): Promise<string | undefined> => {
+export const getRemoteUrl = (): Promise<string> => {
   return new Promise((resolve, reject) => {
     git.listRemote(["--get-url"], (err, data) => {
       if (err) {

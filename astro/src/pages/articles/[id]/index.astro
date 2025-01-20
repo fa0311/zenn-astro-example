@@ -12,8 +12,9 @@ import { getArticleData, getZennUrl, markdownToHtmlNormalized } from "../../../l
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
+  const remote = (await getRemoteUrl()).slice(0, ".git".length * -1);
 
-  return articles.map(async (article) => {
+  return articles.map((article) => {
     const relatedArticles = article.getRelatedArticles().slice(0, 6);
     const nav = article.getNavigation().filter((heading) => heading.level <= 2);
     const lastCommit = article.lastCommit ?? new Date();
@@ -49,7 +50,7 @@ export const getStaticPaths = async () => {
         type: article.frontmatter.type,
         published: article.frontmatter.published,
         lastCommit: lastCommitDate,
-        github: await getRemoteUrl(),
+        edit: `${remote}/blob/main/articles/${article.slug}.md`,
         nav: nav.map((heading) => ({
           title: heading.text,
           slug: heading.slug,
@@ -76,7 +77,7 @@ const {
   description,
   published,
   slug,
-  github,
+  edit,
 } = Astro.props;
 ---
 
@@ -105,11 +106,12 @@ const {
           <Topics topics={[...topics, type]} />
         </div>
         <Zenn html={html} />
-        <div class="edit-github">
-          <Github />
-          {github}
-          <p class="edit-github-text">GitHubで編集を提案</p>
-        </div>
+        <a href={edit} target="_blank">
+          <div class="edit-github">
+            <Github />
+            <p class="edit-github-text">GitHubで編集を提案</p>
+          </div>
+        </a>
       </div>
 
       <aside>
@@ -230,6 +232,15 @@ const {
     .edit-github-text {
       margin: 0;
       font-size: 0.9rem;
+    }
+    .edit-github:hover {
+      background: #f5fbff;
+      border-color: #d6e3ed;
+    }
+
+    a:focus .edit-github {
+      border: 1px solid #3ea8ff;
+      box-shadow: 0 0 0 2.5px #bfdcff;
     }
   </style>
 </Layout>
