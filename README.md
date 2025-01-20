@@ -1,3 +1,3 @@
 # Zenn CLI
 
-* [📘 How to use](https://zenn.dev/zenn/articles/zenn-cli-guide)
+README: <https://fa0311.github.io/zenn-astro-example/articles/92511cda9a89c3/>
