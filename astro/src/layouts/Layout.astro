@@ -55,7 +55,7 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
 
     <footer>
       <div class="site-footer">
-        <p>©{new Date().getFullYear()}{new URL(Astro.url).hostname}</p>
+        <p>© {new Date().getFullYear()} {new URL(Astro.url).hostname}</p>
       </div>
 
       <style>
@@ -131,6 +131,6 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
           box-sizing: border-box;
         }
       </style>
-    </footer></body
-  >
+    </footer>
+  </body>
 </html>
