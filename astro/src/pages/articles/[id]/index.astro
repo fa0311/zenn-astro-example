@@ -2,16 +2,18 @@
 import "zenn-content-css";
 import Articles from "../../../components/Articles.astro";
 import Emoji from "../../../components/Emoji.astro";
+import Github from "../../../components/Github.astro";
 import Navigation from "../../../components/Navigation.astro";
 import Topics from "../../../components/Topics.astro";
 import Zenn from "../../../components/Zenn.astro";
 import Layout from "../../../layouts/Layout.astro";
-import { getArticleData } from "../../../lib/zenn";
+import { getRemoteUrl } from "../../../lib/git";
+import { getArticleData, getZennUrl, markdownToHtmlNormalized } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
 
-  return articles.map((article) => {
+  return articles.map(async (article) => {
     const relatedArticles = article.getRelatedArticles().slice(0, 6);
     const nav = article.getNavigation().filter((heading) => heading.level <= 2);
     const lastCommit = article.lastCommit ?? new Date();
@@ -22,7 +24,14 @@ export const getStaticPaths = async () => {
       return `${y}/${m}/${d}`;
     })();
 
-    const html = article.getContent().contents();
+    const content = article.getContent();
+    if (article.frontmatter.published) {
+      const md = [":::message", `この記事は <${getZennUrl(article.slug)}> の複製です。`, ":::"];
+      const note = markdownToHtmlNormalized(md.join("\n"));
+      content.prepend(note.contents());
+    }
+    const html = content.contents();
+
     const description = (() => {
       const text = article.getContent().description();
       return text.length > 120 ? `${text.slice(0, 117)}...` : text;
@@ -31,13 +40,16 @@ export const getStaticPaths = async () => {
     return {
       params: { id: article.slug },
       props: {
+        slug: article.slug,
         html: html,
         description: description,
         title: article.frontmatter.title,
         emoji: article.frontmatter.emoji,
         topics: article.frontmatter.topics,
         type: article.frontmatter.type,
+        published: article.frontmatter.published,
         lastCommit: lastCommitDate,
+        github: await getRemoteUrl(),
         nav: nav.map((heading) => ({
           title: heading.text,
           slug: heading.slug,
@@ -52,11 +64,29 @@ export const getStaticPaths = async () => {
     };
   });
 };
-const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, description } =
-  Astro.props;
+const {
+  relatedArticles,
+  lastCommit,
+  html,
+  title,
+  emoji,
+  topics,
+  type,
+  nav,
+  description,
+  published,
+  slug,
+  github,
+} = Astro.props;
 ---
 
-<Layout title={title} description={description} keywords={topics} ogp={`${Astro.url}/ogp.png`}>
+<Layout
+  title={title}
+  description={description}
+  keywords={topics}
+  ogp={`${Astro.url}/ogp.png`}
+  canonical={published ? getZennUrl(slug) : Astro.url}
+>
   <header class="header-content">
     <div class="header-emoji">
       <Emoji emoji={emoji} />
@@ -75,6 +105,11 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, desc
           <Topics topics={[...topics, type]} />
         </div>
         <Zenn html={html} />
+        <div class="edit-github">
+          <Github />
+          {github}
+          <p class="edit-github-text">GitHubで編集を提案</p>
+        </div>
       </div>
 
       <aside>
@@ -180,6 +215,21 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, desc
 
     section {
       margin: 0 0 40px 0;
+    }
+
+    .edit-github {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 20px;
+      gap: 5px;
+      padding: 7px 14px;
+      border: 1px solid #d6e3ed;
+      border-radius: 99rem;
+    }
+
+    .edit-github-text {
+      margin: 0;
+      font-size: 0.9rem;
     }
   </style>
 </Layout>

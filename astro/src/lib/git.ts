@@ -14,3 +14,15 @@ export const getLatestCommitTime = (path: string): Promise<Date | undefined> => 
     });
   });
 };
+
+export const getRemoteUrl = (): Promise<string | undefined> => {
+  return new Promise((resolve, reject) => {
+    git.listRemote(["--get-url"], (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data.trim());
+      }
+    });
+  });
+};

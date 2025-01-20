@@ -48,7 +48,7 @@ export default (title: string) => {
               fontWeight: "bold",
             }}
           >
-            {import.meta.env.AUTHOR_NAME}
+            {import.meta.env.SITE_AUTHOR_NAME}
           </p>
 
           <p

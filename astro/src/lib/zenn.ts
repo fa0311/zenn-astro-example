@@ -63,6 +63,10 @@ export const pageSplit = <T1>(data: T1[]) => {
   });
 };
 
+export const getZennUrl = (slug: string) => {
+  return `https://zenn.dev/${import.meta.env.ZENN_USER_NAME}/articles/${slug}`;
+};
+
 const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
   return articles.map((article) => {
     return {
@@ -115,14 +119,11 @@ const headingsNormalize = (headings: MarkdownHeading[]) => {
   } else {
     const [top, ...rest] = headings;
     const minDepth = Math.min(...rest.map((heading) => heading.depth));
-    console.log(minDepth, top.depth);
     const restLevel = (() => {
       if (top.depth == minDepth) {
         return rest.map((heading) => ({ ...heading, level: heading.depth - top.depth + 1 }));
       } else if (top.depth < minDepth) {
-        const a = rest.map((heading) => ({ ...heading, level: heading.depth - top.depth }));
-        console.log(a);
-        return a;
+        return rest.map((heading) => ({ ...heading, level: heading.depth - top.depth }));
       } else {
         throw new Error("Invalid heading depth");
       }
@@ -138,9 +139,8 @@ const calculateSimilarity = (a: string[], b: string[]) => {
 };
 
 export const markdownToHtmlNormalized = (raw: string) => {
-  const html = markdownToHtml(raw, {
-    embedOrigin: "https://embed.zenn.studio",
-  });
+  const embedOrigin = "https://embed.zenn.dev";
+  const html = markdownToHtml(raw, { embedOrigin });
 
   const $ = cheerio.load(html);
 
@@ -161,6 +161,8 @@ export const markdownToHtmlNormalized = (raw: string) => {
     $(el).attr("title", "embed");
   });
   return {
+    append: (data: string) => $("body").append(data),
+    prepend: (data: string) => $("body").prepend(data),
     contents: () => $("body").html()!,
     description: () => $("p").first().text(),
   };
