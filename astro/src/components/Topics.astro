@@ -12,7 +12,7 @@ const { topics } = Astro.props;
 <div class="topics">
   {
     topics.map((topic) => (
-      <a href={`/topics/${topic}`} class="topic">
+      <a href={`${import.meta.env.BASE_URL}/topics/${topic}`} class="topic">
         <div class="topic-icon">
           <Emoji emoji={topicsConfig(topic)} />
         </div>
