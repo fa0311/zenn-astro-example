@@ -12,7 +12,10 @@ import { getArticleData, getZennUrl, markdownToHtmlNormalized } from "../../../l
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
-  const remote = (await getRemoteUrl()).slice(0, ".git".length * -1);
+  const remote = (async () => {
+    const url = await getRemoteUrl();
+    return url.endsWith(".git") ? url.slice(0, ".git".length * -1) : url;
+  })();
 
   return articles.map((article) => {
     const relatedArticles = article.getRelatedArticles().slice(0, 6);
