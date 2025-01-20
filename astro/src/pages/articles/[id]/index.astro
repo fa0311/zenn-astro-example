@@ -1,0 +1,185 @@
+---
+import "zenn-content-css";
+import Articles from "../../../components/Articles.astro";
+import Emoji from "../../../components/Emoji.astro";
+import Navigation from "../../../components/Navigation.astro";
+import Topics from "../../../components/Topics.astro";
+import Zenn from "../../../components/Zenn.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { getArticleData } from "../../../lib/zenn";
+
+export const getStaticPaths = async () => {
+  const articles = await getArticleData();
+
+  return articles.map((article) => {
+    const relatedArticles = article.getRelatedArticles().slice(0, 6);
+    const nav = article.getNavigation().filter((heading) => heading.level <= 2);
+    const lastCommit = article.lastCommit ?? new Date();
+    const lastCommitDate = (() => {
+      const y = lastCommit.getFullYear().toString();
+      const m = (lastCommit.getMonth() + 1).toString().padStart(2, "0");
+      const d = lastCommit.getDate().toString().padStart(2, "0");
+      return `${y}/${m}/${d}`;
+    })();
+
+    const html = article.getContent().contents();
+    const description = (() => {
+      const text = article.getContent().description();
+      return text.length > 120 ? `${text.slice(0, 117)}...` : text;
+    })();
+
+    return {
+      params: { id: article.slug },
+      props: {
+        html: html,
+        description: description,
+        title: article.frontmatter.title,
+        emoji: article.frontmatter.emoji,
+        topics: article.frontmatter.topics,
+        type: article.frontmatter.type,
+        lastCommit: lastCommitDate,
+        nav: nav.map((heading) => ({
+          title: heading.text,
+          slug: heading.slug,
+          level: heading.level,
+        })),
+        relatedArticles: relatedArticles.map((article) => ({
+          title: article.frontmatter.title,
+          emoji: article.frontmatter.emoji,
+          slug: article.slug,
+        })),
+      },
+    };
+  });
+};
+const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, description } =
+  Astro.props;
+---
+
+<Layout title={title} description={description} keywords={topics} ogp={`${Astro.url}/ogp.png`}>
+  <header class="header-content">
+    <div class="header-emoji">
+      <Emoji emoji={emoji} />
+    </div>
+    <div class="title-content">
+      <h1>{title}</h1>
+    </div>
+    <div class="title-content">
+      <p class="title-date">{lastCommit}に更新</p>
+    </div>
+  </header>
+  <main>
+    <article>
+      <div class="content-main">
+        <div class="topics">
+          <Topics topics={[...topics, type]} />
+        </div>
+        <Zenn html={html} />
+      </div>
+
+      <aside>
+        <div class="content-nav">
+          <h2 class="nav-title">目次</h2>
+          <Navigation data={nav} type="original" />
+        </div>
+      </aside>
+    </article>
+    <section class="related-articles-content">
+      <h2>Read next</h2>
+      <Articles type="list" data={relatedArticles} />
+    </section>
+  </main>
+
+  <style>
+    h1 {
+      font-size: 24px;
+      margin: 24px 0px 0px;
+    }
+
+    .header-emoji {
+      width: 75px;
+      height: 75px;
+      margin: 0 auto;
+    }
+    .topics {
+      margin: 10px 0;
+    }
+
+    .header-content {
+      padding: 60px;
+      margin: 0 auto;
+      max-width: 840px;
+    }
+
+    main {
+      max-width: 1200px;
+      padding: 0 40px;
+      margin: 0 auto;
+    }
+
+    article {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+    }
+    @media (max-width: 920px) {
+      article {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        display: none;
+      }
+    }
+
+    .title-content {
+      display: flex;
+      justify-content: center;
+    }
+
+    .title-date {
+      color: #65717b;
+    }
+
+    .nav-title {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .content-main {
+      max-width: 830px;
+      padding: 20px 40px 40px 40px;
+      margin: 0 0 40px 0;
+      background-color: #fff;
+      border-radius: 4px;
+      border: 1px solid #e4edf4;
+      overflow: hidden;
+    }
+
+    .related-articles-content {
+      margin: 0 auto;
+      max-width: 960px;
+    }
+
+    .related-articles-content h2 {
+      font-size: 1.7rem;
+      font-weight: bold;
+    }
+
+    .content-nav {
+      position: sticky;
+      top: 30px;
+      padding: 20px 20px 25px;
+      background-color: #ffffff;
+      border-radius: 4px;
+      border: 1px solid #e4edf4;
+      margin: 0 0 40px 0;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    section {
+      margin: 0 0 40px 0;
+    }
+  </style>
+</Layout>

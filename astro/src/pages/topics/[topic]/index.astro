@@ -1,0 +1,15 @@
+---
+import { getArticleData, getTopics } from "../../../lib/zenn";
+
+export const getStaticPaths = async () => {
+  const articles = await getArticleData();
+  return getTopics(articles).map((topic) => {
+    return {
+      params: { topic: topic },
+    };
+  });
+};
+
+const { topic } = Astro.params;
+return Astro.rewrite(`topics/${topic}/1`);
+---

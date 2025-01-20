@@ -1,0 +1,55 @@
+---
+import { topicsConfig } from "../lib/topics";
+import Emoji from "./Emoji.astro";
+
+interface Props {
+  topics: string[];
+}
+
+const { topics } = Astro.props;
+---
+
+<div class="topics">
+  {
+    topics.map((topic) => (
+      <a href={`/topics/${topic}`} class="topic">
+        <div class="topic-icon">
+          <Emoji emoji={topicsConfig(topic)} />
+        </div>
+        <p class="topic-item">{topic}</p>
+      </a>
+    ))
+  }
+</div>
+<style>
+  .topics {
+    display: flex;
+    padding: 0 0 10px 0;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .topic {
+    display: flex;
+    padding: 3px;
+    border-radius: 20px;
+    border: 1px solid #e4edf4;
+  }
+
+  .topic:hover {
+    background: #f5f9fc;
+  }
+
+  .topic-item {
+    margin: auto 7px;
+    font-size: 0.8rem;
+    text-wrap: nowrap;
+  }
+
+  .topic-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+</style>

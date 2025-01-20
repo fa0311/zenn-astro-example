@@ -1,0 +1,55 @@
+---
+import "zenn-content-css";
+import Articles from "../components/Articles.astro";
+import Pagination from "../components/Pagination.astro";
+import Layout from "../layouts/Layout.astro";
+import { getArticleData, pageSplit } from "../lib/zenn";
+
+export const getStaticPaths = async () => {
+  const data = await getArticleData();
+  return pageSplit(data).map(({ data, index, length }) => {
+    return {
+      params: { index: index },
+      props: {
+        index: index,
+        length: length,
+        data: data.map((article) => {
+          return {
+            slug: article.slug,
+            title: article.frontmatter.title,
+            emoji: article.frontmatter.emoji,
+          };
+        }),
+      },
+    };
+  });
+};
+
+const { data, index, length } = Astro.props;
+---
+
+<Layout
+  title="Articles"
+  description="記事一覧"
+  keywords={["記事一覧"]}
+  robots="nosnippet"
+  canonical={index === 1 ? new URL(".", Astro.url) : Astro.url}
+>
+  <main>
+    <section>
+      <h2>Articles</h2>
+      <Articles type="list" data={data} />
+    </section>
+    <section>
+      <Pagination index={index} length={length} />
+    </section>
+  </main>
+</Layout>
+
+<style>
+  main {
+    max-width: 960px;
+    padding: 0 40px;
+    margin: 0 auto;
+  }
+</style>

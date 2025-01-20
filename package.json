@@ -1,0 +1,24 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "new:article": "zenn new:article",
+    "new:book": "zenn new:book",
+    "preview": "zenn preview",
+    "astro": "pnpm -F \"astro\"",
+    "astro:dev": "pnpm -F \"astro\" dev",
+    "astro:build": "pnpm -F \"astro\" build",
+    "astro:preview": "pnpm -F \"astro\" preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zenn-cli": "^0.1.158"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}

@@ -1,0 +1,71 @@
+---
+interface Props {
+  index: number;
+  length: number;
+}
+
+const { index, length } = Astro.props;
+---
+
+<div class="pagination">
+  {
+    index > 1 && (
+      <a href={`/${index - 1}`}>
+        <p class="pagination-prev">
+          <span class="icon">←</span>
+          {index - 1}ページへ
+        </p>
+      </a>
+    )
+  }
+  {
+    index < length && (
+      <a href={`/${index + 1}`}>
+        <p class="pagination-next">
+          次のページへ
+          <span class="icon">→</span>
+        </p>
+      </a>
+    )
+  }
+</div>
+<style>
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+  }
+
+  .pagination-prev {
+    color: #8f9faa;
+    padding: 7px 16px;
+  }
+
+  .pagination-prev:hover {
+    background: #edf2f7;
+    color: #000000d1;
+  }
+
+  .pagination-next:hover {
+    background: #f5fbff;
+    border-color: #d6e3ed;
+  }
+
+  a:focus .pagination-next {
+    border: 1px solid #3ea8ff;
+    box-shadow: 0 0 0 2.5px #bfdcff;
+  }
+
+  .pagination-next {
+    color: #000000d1;
+    padding: 7px 16px;
+    background: #ffffff;
+    border: 1px solid #d6e3ed;
+    border-radius: 99rem;
+  }
+
+  .pagination-next .icon {
+    color: #8f9faa;
+  }
+</style>

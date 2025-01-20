@@ -1,0 +1,14 @@
+---
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+---
+
+<script>
+  import "zenn-embed-elements";
+</script>
+<script is:inline src="https://embed.zenn.studio/js/listen-embed-event.js"></script>
+
+<div set:html={html} class="znc" />

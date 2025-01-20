@@ -1,0 +1,148 @@
+---
+interface Props {
+  type: "original" | "zenn" | "zenn-selected";
+  data: {
+    title: string;
+    slug: string;
+    level: number;
+  }[];
+}
+
+const { data, type } = Astro.props;
+---
+
+<nav class:list={[`type-${type}`]}>
+  <ol>
+    {
+      data.map(({ title, slug, level }) => (
+        <li class:list={[`level-${level}`]}>
+          <a href={`#${slug}`}>{title}</a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+<style>
+  ol {
+    position: relative;
+  }
+
+  ol:before {
+    position: absolute;
+    top: 17px;
+    bottom: 8px;
+    left: 5px;
+    width: 2px;
+    content: "";
+    border-radius: 0 0 5px 5px;
+    margin: 0 0 5px 0;
+  }
+
+  li {
+    position: relative;
+    padding-left: 21px;
+  }
+
+  li:before {
+    border: 2px solid #ffffffff;
+    position: absolute;
+    content: "";
+    border-radius: 50%;
+  }
+
+  li.level-1 a {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  li.level-2 a {
+    font-size: 14px;
+  }
+
+  li.level-1:before {
+    top: 7px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #fff;
+  }
+
+  li.level-2:before {
+    top: 10px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #fff;
+  }
+
+  .type-original ol:before,
+  .type-original li.level-1:before,
+  .type-original li.level-2:before {
+    background: #99cbf4;
+  }
+
+  .type-original li.level-1 a {
+    color: #555555;
+  }
+  .type-original li.level-2 a {
+    color: #333333;
+  }
+
+  .type-original li.level-2:hover:before,
+  .type-original li.level-1:hover:before {
+    background: #3ea8ff;
+    border: 2px solid #e0efff;
+  }
+
+  .type-original li.level-2:hover a,
+  .type-original li.level-1:hover a {
+    color: #000000;
+  }
+
+  .type-zenn ol:before,
+  .type-zenn li.level-1:before,
+  .type-zenn li.level-2:before {
+    background: #b0d3f9;
+  }
+
+  .type-zenn li.level-1 a,
+  .type-zenn li.level-2 a {
+    color: #65717b;
+  }
+
+  .type-zenn li.level-1:hover:before {
+    background: #3ea8ff;
+    border: 2px solid #e0efff;
+  }
+
+  .type-zenn li.level-2:hover:before {
+    top: 4px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background: #3ea8ff;
+  }
+
+  .type-zenn-selected ol:before,
+  .type-zenn-selected li.level-1:before,
+  .type-zenn-selected li.level-2:before {
+    background: #3ea8ff;
+  }
+  .type-zenn-selected li.level-1 a,
+  .type-zenn-selected li.level-2 a {
+    color: #000000d1;
+  }
+
+  .type-zenn-selected li.level-1:hover:before {
+    background: #3ea8ff;
+    border: 2px solid #e0efff;
+  }
+
+  .type-zenn-selected li.level-2:hover:before {
+    top: 4px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background: #3ea8ff;
+  }
+</style>

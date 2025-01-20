@@ -1,0 +1,136 @@
+---
+interface Props {
+  title: string;
+  keywords: string[];
+  ogp?: string | URL;
+  description?: string;
+  robots?: string;
+  canonical?: string | URL;
+}
+
+import Emoji from "../components/Emoji.astro";
+
+const { title, description, keywords, ogp, robots, canonical } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    {description && <meta name="description" content={description} />}
+    <meta name="keywords" content={keywords.join(",")} />
+    <meta property="og:type" content={ogp ? "article" : "website"} />
+    <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
+    <meta property="twitter:card" content={ogp ? "summary_large_image" : "summary"} />
+    <meta property="og:url" content={Astro.url} />
+
+    <meta property=" og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogp && <meta property="og:image" content={ogp} />}
+    {robots && <meta name="robots" content={robots} />}
+    <link rel="canonical" href={canonical ?? Astro.url} />
+
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <header>
+      <aside class="site-header">
+        <nav>
+          <a href="/">
+            <div class="site-logo">
+              <div class="site-icon">
+                <Emoji emoji={import.meta.env.SITE_ICON} />
+              </div>
+              <p class="site-name">{import.meta.env.SITE_NAME}</p>
+            </div>
+          </a>
+        </nav>
+      </aside>
+    </header>
+    <slot />
+
+    <footer>
+      <div class="site-footer">
+        <p>{`© ${new Date().getFullYear()} ${new URL(Astro.url).hostname}`}</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  html {
+    height: 100%;
+    font-family: "Meiryo", "sans-serif", "Segoe UI Emoji";
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    line-height: 1.6;
+    background: #edf2f7;
+    color: #000000d1;
+    word-break: break-word;
+    word-wrap: break-word;
+    line-break: strict;
+  }
+
+  header {
+    background: #ffffff;
+    padding: 1rem 2rem;
+    top: 0;
+    border-bottom: 1px solid #e4edf4;
+  }
+
+  footer {
+    position: sticky;
+    top: 100vh;
+    margin: 40px 0 0 0;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .site-header,
+  .site-footer {
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .site-logo {
+    display: flex;
+    width: 100%;
+  }
+  .site-icon {
+    width: 35px;
+    height: 35px;
+  }
+  .site-name {
+    display: inline;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: auto 0 auto 10px;
+  }
+</style>
+
+<style is:global>
+  a {
+    color: #000000d1;
+    text-decoration: none;
+  }
+  ol,
+  li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  *,
+  :after,
+  :before {
+    box-sizing: border-box;
+  }
+</style>

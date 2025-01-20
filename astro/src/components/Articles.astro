@@ -1,0 +1,123 @@
+---
+import Emoji from "./Emoji.astro";
+
+interface Props {
+  type: "list" | "card";
+  data: {
+    title: string;
+    emoji: string;
+    slug: string;
+  }[];
+}
+
+const { type, data } = Astro.props;
+---
+
+<div class:list={["articles", type]}>
+  {
+    data.map(({ title, emoji, slug }) => (
+      <a href={`/articles/${slug}`}>
+        <article>
+          <div class="article-header">
+            <div class="article-emoji">
+              <Emoji emoji={emoji} />
+            </div>
+          </div>
+          <div class="article-body">
+            <h2 class="article-title">{title}</h2>
+          </div>
+        </article>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .articles {
+    display: grid;
+    gap: 32px;
+  }
+
+  .list.articles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card.articles {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (max-width: 768px) {
+    .list.articles {
+      grid-template-columns: 1fr;
+    }
+    .card.articles {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .card.articles {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  article {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card article {
+    flex-direction: column;
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #ffffff;
+  }
+
+  .article-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .list .article-header {
+    width: 92px;
+    height: 92px;
+    border-radius: 14px;
+    background-color: #ffffff;
+  }
+
+  .card .article-header {
+    height: 96px;
+    background-color: rgb(207, 229, 255);
+  }
+
+  .list .article-body {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 108px);
+    overflow: hidden;
+  }
+
+  .card .article-body {
+    height: 75px;
+    padding: 12px;
+  }
+
+  .article-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: bold;
+    text-wrap: wrap;
+    display: -webkit-box;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .article-emoji {
+    width: 42px;
+    height: 42px;
+  }
+</style>

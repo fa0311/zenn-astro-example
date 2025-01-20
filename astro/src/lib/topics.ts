@@ -1,0 +1,123 @@
+export const topicsConfig: (topic: string) => string = (topic) => {
+  const config = {
+    // type
+    tech: "🛠️",
+    idea: "💡",
+
+    // プログラミング言語
+    python: "🐍",
+    javascript: "🟨",
+    typescript: "🟦",
+    ruby: "💎",
+    go: "🏎️",
+    rust: "🦀",
+    java: "☕",
+    kotlin: "📱",
+    swift: "🍎",
+    php: "🐘",
+    csharp: "🔷",
+    cpp: "💻",
+    dart: "🎯",
+    scala: "🚀",
+    perl: "🦔",
+    lua: "🌙",
+    shell: "🐚",
+
+    // フレームワーク/ライブラリ
+    react: "⚛️",
+    vue: "🟩",
+    angular: "📐",
+    svelte: "🔥",
+    django: "🌱",
+    flask: "🍶",
+    express: "🚂",
+    laravel: "🛤️",
+    spring: "🌸",
+    rails: "🛤️",
+    nuxt: "📦",
+    unity: "🎮",
+    flutter: "🦋",
+    electron: "⚡",
+    tensorflow: "🧠",
+    pytorch: "🔥",
+    keras: "🔥",
+    scikit: "🔬",
+    pandas: "🐼",
+    numpy: "🧮",
+    matplotlib: "📊",
+    tailwindcss: "🌪️",
+    bootstrap: "🥾",
+    materialui: "🧩",
+
+    // テクノロジー/分野
+    ai: "🤖",
+    ml: "🧠",
+    chatgpt: "🤖",
+    data: "📊",
+    cloud: "☁️",
+    devops: "🚀",
+    kubernetes: "☸️",
+    docker: "🐳",
+    blockchain: "⛓️",
+    security: "🔒",
+    bigdata: "📈",
+    edge: "⚡",
+    robotics: "🤖",
+    quantum: "🧬",
+    iot: "📡",
+    ar: "🌐",
+    vr: "🕶️",
+
+    // ツール/プラットフォーム
+    vscode: "🖌️",
+    git: "🌲",
+    github: "🐙",
+    gitlab: "🦊",
+    jenkins: "🧱",
+    ci: "🔄",
+    cd: "🚚",
+    serverless: "⚡",
+    terraform: "🏗️",
+    ansible: "🧙",
+    bash: "🐚",
+
+    // 開発/デザイン
+    frontend: "🎨",
+    backend: "📦",
+    fullstack: "🧩",
+    api: "🔗",
+    testing: "🧪",
+    ux: "🖋️",
+    ui: "🖌️",
+    mobile: "📱",
+    web: "🌍",
+    game: "🎮",
+
+    // その他技術
+    database: "🗄️",
+    nosql: "📂",
+    graphql: "🔍",
+    redis: "🚀",
+    kafka: "🦄",
+    paas: "🌐",
+    saas: "🛠️",
+    oss: "👐",
+
+    // 個人開発や学習
+    個人開発: "👨‍💻",
+    勉強会: "📚",
+    アイデア: "💡",
+    書籍: "📖",
+    技術ブログ: "✍️",
+
+    // その他新しいトピック
+    metaverse: "🕶️",
+    llm: "📖",
+    bioinformatics: "🧬",
+    fintech: "💰",
+    edtech: "📚",
+    healthtech: "🩺",
+  } as { [key: string]: string };
+
+  return config[topic] ?? "#⃣";
+};
