@@ -139,7 +139,7 @@ const calculateSimilarity = (a: string[], b: string[]) => {
 };
 
 export const markdownToHtmlNormalized = (raw: string) => {
-  const embedOrigin = "https://embed.zenn.dev";
+  const embedOrigin = "https://embed.zenn.studio";
   const html = markdownToHtml(raw, { embedOrigin });
 
   const $ = cheerio.load(html);
