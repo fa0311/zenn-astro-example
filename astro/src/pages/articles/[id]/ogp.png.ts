@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import Ogp from "../../../components/Ogp";
+import Ogp from "../../../components/tsx/Ogp";
 import { getArticleData } from "../../../lib/zenn";
 
 import { ImageResponse } from "@vercel/og";

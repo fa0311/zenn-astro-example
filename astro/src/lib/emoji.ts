@@ -1,5 +1,5 @@
 import twemoji from "@twemoji/api";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 export const getEmojiUrl = (emoji: string): string => {
   const html = twemoji.parse(emoji, { folder: "svg", ext: ".svg" });

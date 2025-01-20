@@ -12,10 +12,10 @@ export const GET: APIRoute = async ({ params, props }) => {
   });
 };
 
-export function getStaticPaths() {
+export const getStaticPaths = () => {
   const slugs = import.meta.glob("../../../../images/**/*.{png,jpg,jpeg,webp,gif}");
   return Object.entries(slugs).map(([file]) => {
     const slug = Path.relative("../../../../images", file).replaceAll(sep, "/");
     return { params: { slug: slug } };
   });
-}
+};
