@@ -40,7 +40,7 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
     <header>
       <aside class="site-header">
         <nav>
-          <a href=`${import.meta.env.BASE_URL}/`>
+          <a href=`${import.meta.env.BASE_URL}`>
             <div class="site-logo">
               <div class="site-icon">
                 <Emoji emoji={import.meta.env.SITE_ICON} />
@@ -55,14 +55,7 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
 
     <footer>
       <div class="site-footer">
-        <p>
-          {
-            `
-      ©
-      {new Date().getFullYear()}
-      {new URL(Astro.url).hostname}`
-          }} p />
-        </p>
+        <p>©{new Date().getFullYear()}{new URL(Astro.url).hostname}</p>
       </div>
 
       <style>
