@@ -5,6 +5,7 @@ import markdownToHtml from "./markdownToHtml";
 
 import * as cheerio from "cheerio";
 import "zenn-content-css";
+import { cache } from "./cache";
 import { getLatestCommitTime } from "./git";
 
 type Frontmatter = {
@@ -46,14 +47,19 @@ const getArticleList = async (): Promise<ArticleListResponse[]> => {
 };
 
 export const getArticleData = async () => {
-  const data = await getArticleList();
-  return getArticleDataRecursive(data.sort((a, b) => timeSort(a.lastCommit, b.lastCommit)));
+  return cache("getArticleData", async () => {
+    const data = await getArticleList();
+    return getArticleDataRecursive(data.sort((a, b) => timeSort(a.lastCommit, b.lastCommit)));
+  });
 };
 
-export const getTopics = (articles: ReturnType<typeof getArticleDataRecursive>) => {
-  const topics = articles.flatMap((article) => article.frontmatter.topics);
-  const types = articles.map((article) => article.frontmatter.type);
-  return [...new Set([...topics, ...types])];
+export const getTopics = async () => {
+  return cache("getTopics", async () => {
+    const articles = await getArticleData();
+    const topics = articles.flatMap((article) => article.frontmatter.topics);
+    const types = articles.map((article) => article.frontmatter.type);
+    return [...new Set([...topics, ...types])];
+  });
 };
 
 export const pageSplit = <T1>(data: T1[]) => {

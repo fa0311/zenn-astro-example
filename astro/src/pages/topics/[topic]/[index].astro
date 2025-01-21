@@ -9,7 +9,8 @@ import { getArticleData, getTopics, pageSplit } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
-  return getTopics(articles).flatMap((topic) => {
+  const topics = await getTopics();
+  return topics.flatMap((topic) => {
     const data = articles.filter((article) => {
       const articleTopics = article.frontmatter.topics;
       return articleTopics.includes(topic) || article.frontmatter.type === topic;
