@@ -29,6 +29,17 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
     <meta property=" og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
+    <script
+      type="text/partytown"
+      src=`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.GA_MEASUREMENT_ID}`
+    ></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      const gtag = () => dataLayer.push(arguments);
+      gtag("js", new Date());
+      gtag("config", import.meta.env.GA_MEASUREMENT_ID);
+    </script>
+
     <!-- <meta http-equiv="cache-control" content="max-age=31536000, immutable" /> -->
     {ogp && <meta property="og:image" content={ogp} />}
     {robots && <meta name="robots" content={robots} />}
