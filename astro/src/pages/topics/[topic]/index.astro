@@ -1,4 +1,5 @@
 ---
+import { astroURL } from "../../../lib/url";
 import { getTopics } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
@@ -11,5 +12,6 @@ export const getStaticPaths = async () => {
 };
 
 const { topic } = Astro.params;
-return Astro.rewrite(`topics/${topic}/1`);
+
+return Astro.rewrite(astroURL(Astro).file(`/topics/${topic}/1`));
 ---

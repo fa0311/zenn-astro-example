@@ -1,16 +1,19 @@
 ---
+import { GoogleAnalytics } from "astro-google-analytics";
 interface Props {
   title: string;
   keywords: string[];
-  ogp?: string | URL;
+  url?: URL;
+  ogp?: URL;
   description?: string;
   robots?: string;
-  canonical?: string | URL;
+  canonical?: URL;
 }
 
 import Emoji from "../components/Emoji.astro";
+import { astroURL } from "../lib/url";
 
-const { title, description, keywords, ogp, robots, canonical } = Astro.props;
+const { title, description, keywords, ogp, robots, canonical, url } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,33 +21,22 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href=`${import.meta.env.BASE_URL}/favicon.ico` />
+    <link rel="icon" type="image/x-icon" href={`${astroURL(Astro).file("/favicon.ico")}`} />
     <meta name="generator" content={Astro.generator} />
     {description && <meta name="description" content={description} />}
     <meta name="keywords" content={keywords.join(",")} />
     <meta property="og:type" content={ogp ? "article" : "website"} />
     <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
     <meta property="twitter:card" content={ogp ? "summary_large_image" : "summary"} />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={url ?? astroURL(Astro).url} />
     <meta property=" og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
-    <script
-      type="text/partytown"
-      src=`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.GA_MEASUREMENT_ID}`
-    ></script>
-    <script type="text/partytown">
-      window.dataLayer = window.dataLayer || [];
-      const gtag = () => dataLayer.push(arguments);
-      gtag("js", new Date());
-      gtag("config", import.meta.env.GA_MEASUREMENT_ID);
-    </script>
-
-    <!-- <meta http-equiv="cache-control" content="max-age=31536000, immutable" /> -->
-    {ogp && <meta property="og:image" content={ogp} />}
+    <GoogleAnalytics id={import.meta.env.GA_MEASUREMENT_ID} />
+    {ogp && <meta property="og:image" content={ogp.href} />}
     {robots && <meta name="robots" content={robots} />}
-    <link rel="canonical" href={canonical ?? Astro.url} />
-    <link rel="sitemap" type="application/xml" href=`${import.meta.env.BASE_URL}/sitemap.xml` />
+    <link rel="canonical" href={canonical ?? url ?? astroURL(Astro).url} />
+    <link rel="sitemap" type="application/xml" href=`${ astroURL(Astro).file("/sitemap-index.xml")}` />
 
     <title>{title}</title>
   </head>
@@ -68,7 +60,7 @@ const { title, description, keywords, ogp, robots, canonical } = Astro.props;
 
     <footer>
       <div class="site-footer">
-        <p>© {new Date().getFullYear()} {new URL(Astro.url).hostname}</p>
+        <p>© {new Date().getFullYear()} {astroURL(Astro).url.hostname}</p>
       </div>
 
       <style>

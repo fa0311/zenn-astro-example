@@ -3,6 +3,7 @@ import "zenn-content-css";
 import Articles from "../components/Articles.astro";
 import Pagination from "../components/Pagination.astro";
 import Layout from "../layouts/Layout.astro";
+import { astroURL } from "../lib/url";
 import { getArticleData, pageSplit } from "../lib/zenn";
 
 export const getStaticPaths = async () => {
@@ -24,7 +25,6 @@ export const getStaticPaths = async () => {
     };
   });
 };
-
 const { data, index, length } = Astro.props;
 ---
 
@@ -33,7 +33,7 @@ const { data, index, length } = Astro.props;
   description="記事一覧"
   keywords={["記事一覧"]}
   robots="nosnippet"
-  canonical={index === 1 ? new URL(".", Astro.url) : Astro.url}
+  url={index === 1 ? astroURL(Astro).dir("..") : undefined}
 >
   <main>
     <section>

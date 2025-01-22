@@ -70,7 +70,7 @@ export const pageSplit = <T1>(data: T1[]) => {
 };
 
 export const getZennUrl = (slug: string) => {
-  return `https://zenn.dev/${import.meta.env.ZENN_USER_NAME}/articles/${slug}`;
+  return new URL(`https://zenn.dev/${import.meta.env.ZENN_USER_NAME}/articles/${slug}`);
 };
 
 const getArticleDataRecursive = (articles: ArticleListResponse[]) => {

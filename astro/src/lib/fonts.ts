@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 
 export const getFont = async (url: string): Promise<Buffer> => {
-  const dir = import.meta.env.SSR ? "../../../../.fonts" : "../../../.fonts";
+  const dir = import.meta.env.DEV ? "../../.fonts" : "../../../../.fonts";
   const name = new URL(url).pathname.split("/").pop();
   const path = new URL(`${dir}/${name}`, import.meta.url);
   try {

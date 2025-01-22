@@ -8,6 +8,7 @@ import Topics from "../../../components/Topics.astro";
 import Zenn from "../../../components/Zenn.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { getRemoteUrl } from "../../../lib/git";
+import { astroURL } from "../../../lib/url";
 import { getArticleData, getZennUrl, markdownToHtmlNormalized } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
@@ -68,28 +69,16 @@ export const getStaticPaths = async () => {
     };
   });
 };
-const {
-  relatedArticles,
-  lastCommit,
-  html,
-  title,
-  emoji,
-  topics,
-  type,
-  nav,
-  description,
-  published,
-  slug,
-  edit,
-} = Astro.props;
+const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, description, published, slug, edit } =
+  Astro.props;
 ---
 
 <Layout
   title={title}
   description={description}
   keywords={topics}
-  ogp={`${Astro.url}/ogp.png`}
-  canonical={published ? getZennUrl(slug) : Astro.url}
+  ogp={astroURL(Astro).file("ogp.png")}
+  canonical={published ? getZennUrl(slug) : undefined}
 >
   <header class="header-content">
     <div class="header-emoji">

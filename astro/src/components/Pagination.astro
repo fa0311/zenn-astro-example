@@ -1,4 +1,6 @@
 ---
+import { astroURL } from "../lib/url";
+
 interface Props {
   index: number;
   length: number;
@@ -10,7 +12,7 @@ const { index, length } = Astro.props;
 <div class="pagination">
   {
     index > 1 && (
-      <a href={`${import.meta.env.BASE_URL}/${index - 1}`}>
+      <a href={`${astroURL(Astro).dir(`../${index - 1}`).pathname}`}>
         <p class="pagination-prev">
           <span class="icon">←</span>
           {index - 1}ページへ
@@ -20,7 +22,7 @@ const { index, length } = Astro.props;
   }
   {
     index < length && (
-      <a href={`${import.meta.env.BASE_URL}/${index + 1}`}>
+      <a href={`${astroURL(Astro).dir(`../${index + 1}`).pathname}`}>
         <p class="pagination-next">
           次のページへ
           <span class="icon">→</span>

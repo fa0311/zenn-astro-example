@@ -5,6 +5,7 @@ import Emoji from "../../../components/Emoji.astro";
 import Pagination from "../../../components/Pagination.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { topicsConfig } from "../../../lib/topics";
+import { astroURL } from "../../../lib/url";
 import { getArticleData, getTopics, pageSplit } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
@@ -43,7 +44,7 @@ const { topic, data, length, index } = Astro.props;
   title={topic}
   description={`${topic}の記事一覧`}
   keywords={[topic]}
-  canonical={index === 1 ? new URL(".", Astro.url) : Astro.url}
+  url={index === 1 ? astroURL(Astro).dir("..") : undefined}
 >
   <header>
     <div class="header-content">
