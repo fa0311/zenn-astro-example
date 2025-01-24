@@ -3,12 +3,14 @@ import { getArticleData } from "../../../lib/zenn";
 
 import { ImageResponse } from "@vercel/og";
 import Ogp from "../../../components/tsx/Ogp";
-import { getFont } from "../../../lib/fonts";
+import { getFonts } from "../../../lib/assets";
 
 export const GET: APIRoute = async ({ params }) => {
   const articles = await getArticleData();
   const article = articles.find((article) => article.slug === params.id)!;
-  const font = await getFont("https://github.com/fa0311/blog/releases/download/a/NotoSansJP-Bold.ttf");
+  const font = await getFonts(
+    "https://github.com/fa0311/zenn-astro-example/releases/download/assets/NotoSansJP-Bold.ttf",
+  );
 
   const body = new ImageResponse(Ogp(article.frontmatter.title), {
     fonts: [
