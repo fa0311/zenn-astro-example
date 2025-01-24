@@ -5,6 +5,7 @@ import markdownToHtml from "./markdownToHtml";
 
 import * as cheerio from "cheerio";
 import "zenn-content-css";
+import { getGzip, getJson } from "./assets";
 import { cache } from "./cache";
 import { getLatestCommitTime } from "./git";
 
@@ -22,6 +23,20 @@ type ArticleListRawResponse = {
   contents: MarkdownInstance<Frontmatter>;
 };
 
+export type Topic = {
+  name: string;
+  displayName: string;
+  image: boolean;
+};
+
+type ArticleListResponse = {
+  file: string;
+  contents: MarkdownInstance<Frontmatter>;
+  lastCommit?: Date;
+  topics: Topic[];
+  type: Topic;
+};
+
 const getArticleListRaw = async (): Promise<ArticleListRawResponse[]> => {
   const slugs = import.meta.glob<MarkdownInstance<Frontmatter>>("../../../articles/*.md");
   const article = Object.entries(slugs).map(async ([file, contents]) => {
@@ -30,18 +45,16 @@ const getArticleListRaw = async (): Promise<ArticleListRawResponse[]> => {
   return await Promise.all(article);
 };
 
-type ArticleListResponse = {
-  file: string;
-  contents: MarkdownInstance<Frontmatter>;
-  lastCommit?: Date;
-};
-
 const getArticleList = async (): Promise<ArticleListResponse[]> => {
   const raw = await getArticleListRaw();
+  const topicNormalize = await getTopic();
   const enable = raw.filter((article) => article.contents.frontmatter.static === true);
   const article = enable.map(async (article) => {
     const lastCommit = await getLatestCommitTime(Path.relative("../../", article.file));
-    return { ...article, lastCommit };
+    const topics = article.contents.frontmatter.topics.map((topic) => topicNormalize(topic));
+    const name = article.contents.frontmatter.type.trim().toLowerCase();
+    const type = typeNormalize(name);
+    return { ...article, lastCommit, topics, type };
   });
   return await Promise.all(article);
 };
@@ -53,15 +66,43 @@ export const getArticleData = async () => {
   });
 };
 
-export const getTopics = async () => {
-  return cache("getTopics", async () => {
-    const articles = await getArticleData();
-    const topics = articles.flatMap((article) => article.frontmatter.topics);
-    const types = articles.map((article) => article.frontmatter.type);
-    return [...new Set([...topics, ...types])];
-  });
+const getTopic = async () => {
+  const metadata = await getJson<Record<string, Topic>>(
+    "https://raw.githubusercontent.com/fa0311/zenn-icons/refs/heads/main/metadata.json",
+  );
+  const content = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn-icons.tar.gz");
+  const list = await content.list();
+  return (topic: string) => {
+    const id = topic.toLowerCase().trim();
+    return {
+      name: id,
+      displayName: metadata[id]?.displayName ?? id,
+      image: list.includes(`${id}.png`),
+    };
+  };
 };
 
+const typeNormalize = (name: string) => {
+  return {
+    name: name,
+    displayName: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
+    image: false,
+  };
+};
+
+const unique = <T1, T2>(array: T1[], callback: (item: T1) => T2) => {
+  const u = Array.from(new Set(array.map(callback)));
+  return u.map((name) => array.find((item) => callback(item) === name)!);
+};
+
+export const getTopics = async () => {
+  return await cache("getTopics", async () => {
+    const articles = await getArticleData();
+    const topics = articles.flatMap((article) => article.topics);
+    const types = articles.map((article) => article.type);
+    return unique([...topics, ...types], (topic) => topic.name);
+  });
+};
 export const pageSplit = <T1>(data: T1[]) => {
   const length = Math.max(Math.ceil(data.length / 48), 1);
   return Array.from({ length }).map((_, i) => {
@@ -79,6 +120,8 @@ const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
       slug: Path.basename(article.file, ".md"),
       lastCommit: article.lastCommit,
       frontmatter: article.contents.frontmatter,
+      topics: article.topics,
+      type: article.type,
       getContent: () => markdownToHtmlNormalized(article.contents.rawContent()),
       getRelatedArticles: () => getArticleDataRecursive(getRelatedArticles(articles, article)),
     };

@@ -50,8 +50,8 @@ export const getStaticPaths = async () => {
         description: description,
         title: article.frontmatter.title,
         emoji: article.frontmatter.emoji,
-        topics: article.frontmatter.topics,
-        type: article.frontmatter.type,
+        topics: article.topics,
+        type: article.type,
         published: article.frontmatter.published,
         lastCommit: lastCommitDate,
         edit: `${remote}/blob/main/articles/${article.slug}.md`,
@@ -76,7 +76,7 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, desc
 <Layout
   title={title}
   description={description}
-  keywords={topics}
+  keywords={[...topics, type].map((topic) => topic.displayName)}
   ogp={astroURL(Astro).file("ogp.png")}
   canonical={published ? getZennUrl(slug) : undefined}
 >

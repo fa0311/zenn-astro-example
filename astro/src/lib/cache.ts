@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import * as path from "path";
 
 const cacheData: Record<string, any> = {};
 export const cache = <T>(key: string, callback: () => T) => {
@@ -9,15 +10,32 @@ export const cache = <T>(key: string, callback: () => T) => {
   return cacheData[key] as T;
 };
 
-type WritableType = Parameters<typeof fs.writeFile>[1];
-export const fileCache = async <T extends WritableType>(key: string, callback: () => Promise<T>) => {
+export const getCached = async (key: string, isDir: boolean = false) => {
+  const dir = import.meta.env.DEV ? "../../.cache" : "../../.cache";
   try {
-    return await fs.readFile(`.cache/${key}`);
+    await fs.access(new URL(`${dir}/${key}`, import.meta.url));
+  } catch {
+    if (isDir) {
+      await fs.mkdir(new URL(`${dir}/${key}`, import.meta.url), { recursive: true });
+    } else {
+      await fs.mkdir(new URL(`${dir}/${path.dirname(key)}`, import.meta.url), { recursive: true });
+    }
+  }
+  return new URL(`${dir}/${key}`, import.meta.url);
+};
+
+type WritableType = Buffer<ArrayBufferLike>;
+
+export const fileCache = async (
+  key: string,
+  callback: () => Promise<Buffer<ArrayBufferLike>>,
+): Promise<Buffer<ArrayBufferLike>> => {
+  const path = await getCached(key);
+  try {
+    return await fs.readFile(path);
   } catch (e) {
     const res = await callback();
-    const dir = key.split("/").slice(0, -1).join("/");
-    await fs.mkdir(`.cache/${dir}`, { recursive: true });
-    await fs.writeFile(`.cache/${key}`, res);
+    await fs.writeFile(path, res);
     return res;
   }
 };

@@ -1,10 +1,10 @@
 ---
-import { topicsConfig } from "../lib/topics";
 import { astroURL } from "../lib/url";
-import Emoji from "./Emoji.astro";
+import { type Topic } from "../lib/zenn";
+import Icon from "./Icon.astro";
 
 interface Props {
-  topics: string[];
+  topics: Topic[];
 }
 
 const { topics } = Astro.props;
@@ -13,11 +13,11 @@ const { topics } = Astro.props;
 <div class="topics">
   {
     topics.map((topic) => (
-      <a href={`${astroURL(Astro).dir(`/topics/${topic}`)}`} class="topic">
+      <a href={`${astroURL(Astro).dir(`/topics/${topic.name}`)}`} class="topic">
         <div class="topic-icon">
-          <Emoji emoji={topicsConfig(topic)} />
+          <Icon topic={topic} />
         </div>
-        <p class="topic-item">{topic}</p>
+        <p class="topic-item">{topic.displayName}</p>
       </a>
     ))
   }

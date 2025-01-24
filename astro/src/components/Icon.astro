@@ -1,0 +1,27 @@
+---
+import { astroURL } from "../lib/url";
+import { type Topic } from "../lib/zenn";
+
+interface Props {
+  topic: Topic;
+}
+
+const getSrc = (topic: Topic) => {
+  if (topic.image) {
+    return astroURL(Astro).file(`/assets/icons/${topic.name}.png`);
+  } else {
+    return astroURL(Astro).file(`/assets/icons/topic.png`);
+  }
+};
+
+const { topic } = Astro.props;
+---
+
+<img src={getSrc(topic).pathname} alt={topic.displayName} />
+
+<style>
+  img {
+    width: 100%;
+    height: 100%;
+  }
+</style>
