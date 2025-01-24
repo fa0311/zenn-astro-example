@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getGzip } from "../../lib/assets";
+import { getGzip } from "../../../lib/assets";
 
 export const GET: APIRoute = async () => {
   await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn-icons.gz");

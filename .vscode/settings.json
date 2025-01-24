@@ -26,7 +26,6 @@
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
   },
-  "biome.enabled": false,
 
   "markdown.preview.breaks": true,
   "prettier.useEditorConfig": true

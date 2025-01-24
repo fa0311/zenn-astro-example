@@ -20,7 +20,6 @@ export const getStaticPaths = async () => {
 
   return articles.map((article) => {
     const relatedArticles = article.getRelatedArticles().slice(0, 6);
-    const nav = article.getNavigation().filter((heading) => heading.level <= 2);
     const lastCommit = article.lastCommit ?? new Date();
     const lastCommitDate = (() => {
       const y = lastCommit.getFullYear().toString();
@@ -36,9 +35,10 @@ export const getStaticPaths = async () => {
       content.prepend(note.contents());
     }
     const html = content.contents();
+    const nav = content.headings().filter((heading) => heading.level <= 2);
 
     const description = (() => {
-      const text = article.getContent().description();
+      const text = content.description();
       return text.length > 120 ? `${text.slice(0, 117)}...` : text;
     })();
 

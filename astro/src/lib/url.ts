@@ -1,10 +1,10 @@
-export const astroURL = (Astro: { url: URL }) => {
-  const origin = `${Astro.url.origin}${import.meta.env.BASE_URL}`;
+export const astroURL = (astro: AstroType) => {
+  const origin = `${astro.url.origin}${import.meta.env.BASE_URL}`;
   const slice = (url: string) => url.slice(import.meta.env.BASE_URL.length + 1);
   const slash = !import.meta.env.DEV && import.meta.env.TRAILING_SLASH === "true";
-  return urlResolve(slice(Astro.url.pathname), origin, slash);
+  return urlResolve(slice(astro.url.pathname), origin, slash);
 };
-
+export type AstroType = { url: URL };
 export type FixAstroURL = ReturnType<typeof astroURL>;
 
 const normalize = (url: URL, slash: boolean) => {

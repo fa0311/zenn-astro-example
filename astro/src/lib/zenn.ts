@@ -81,7 +81,6 @@ const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
       frontmatter: article.contents.frontmatter,
       getContent: () => markdownToHtmlNormalized(article.contents.rawContent()),
       getRelatedArticles: () => getArticleDataRecursive(getRelatedArticles(articles, article)),
-      getNavigation: () => headingsNormalize(article.contents.getHeadings()),
     };
   });
 };
@@ -117,6 +116,43 @@ const timeSort = (a: Date | undefined, b: Date | undefined) => {
   }
 };
 
+const calculateSimilarity = (a: string[], b: string[]) => {
+  const intersection = a.filter((value) => b.includes(value));
+  const union = [...new Set([...a, ...b])];
+  return intersection.length / union.length;
+};
+
+export const markdownToHtmlNormalized = (raw: string) => {
+  const embedOrigin = "https://embed.zenn.studio";
+  const html = markdownToHtml(raw, { embedOrigin });
+  const $ = cheerio.load(html);
+
+  $(`img`).each((i, el) => {
+    $(el).attr("src", `${import.meta.env.BASE_URL}/assets${$(el).attr("src")}`);
+  });
+
+  const headings = Array.from($("h1, h2, h3, h4, h5, h6")).map((el) => {
+    const $el = $(el);
+    return {
+      depth: parseInt($el.prop("tagName").slice(1)),
+      slug: $el.attr("id")!,
+      text: $el.text(),
+    };
+  });
+
+  $(`.header-anchor-link`).remove();
+  $(`iframe`).each((i, el) => {
+    $(el).attr("title", "embed");
+  });
+  return {
+    append: (data: string) => $("body").append(data),
+    prepend: (data: string) => $("body").prepend(data),
+    contents: () => $("body").html()!,
+    description: () => $("p").first().text(),
+    headings: () => headingsNormalize(headings),
+  };
+};
+
 const headingsNormalize = (headings: MarkdownHeading[]) => {
   if (headings.length === 0) {
     return [];
@@ -136,40 +172,4 @@ const headingsNormalize = (headings: MarkdownHeading[]) => {
     })();
     return [{ ...top, level: 1 }, ...restLevel];
   }
-};
-
-const calculateSimilarity = (a: string[], b: string[]) => {
-  const intersection = a.filter((value) => b.includes(value));
-  const union = [...new Set([...a, ...b])];
-  return intersection.length / union.length;
-};
-
-export const markdownToHtmlNormalized = (raw: string) => {
-  const embedOrigin = "https://embed.zenn.studio";
-  const html = markdownToHtml(raw, { embedOrigin });
-
-  const $ = cheerio.load(html);
-
-  // $(`img`).each((i, el) => {
-  //   const src = $(el).attr("src")!.slice("images/".length);
-  //   $(el).attr("src", src);
-  // });
-
-  // Array.from([5, 4, 3, 2, 1]).forEach((i) => {
-  //   $(`h${i}`).each((_, el) => {
-  //     console.log($(`h${i}`).html());
-  //     $(el).replaceWith(`<h${i + 1}>${$(el).html()}</h${i + 1}>`);
-  //   });
-  // });
-
-  $(`.header-anchor-link`).remove();
-  $(`iframe`).each((i, el) => {
-    $(el).attr("title", "embed");
-  });
-  return {
-    append: (data: string) => $("body").append(data),
-    prepend: (data: string) => $("body").prepend(data),
-    contents: () => $("body").html()!,
-    description: () => $("p").first().text(),
-  };
 };
