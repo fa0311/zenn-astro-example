@@ -15,9 +15,9 @@ const { data, type } = Astro.props;
   <ol>
     {
       data.map(({ title, slug, level }) => (
-        <li class:list={[`level-${level}`]}>
-          <a href={`#${slug}`}>{title}</a>
-        </li>
+        <a href={`#${slug}`}>
+          <li class:list={[`level-${level}`]}>{title}</li>
+        </a>
       ))
     }
   </ol>
@@ -50,17 +50,17 @@ const { data, type } = Astro.props;
     border-radius: 50%;
   }
 
-  li.level-1 a {
+  li.level-1 {
     font-weight: bold;
     font-size: 14px;
   }
 
-  li.level-2 a {
+  li.level-2 {
     font-size: 14px;
   }
 
   li.level-1:before {
-    top: 7px;
+    top: 6px;
     left: 0;
     width: 12px;
     height: 12px;
@@ -68,7 +68,7 @@ const { data, type } = Astro.props;
   }
 
   li.level-2:before {
-    top: 10px;
+    top: 8px;
     left: 2px;
     width: 8px;
     height: 8px;
@@ -81,10 +81,10 @@ const { data, type } = Astro.props;
     background: #99cbf4;
   }
 
-  .type-original li.level-1 a {
+  .type-original li.level-1 {
     color: #555555;
   }
-  .type-original li.level-2 a {
+  .type-original li.level-2 {
     color: #333333;
   }
 
@@ -94,8 +94,8 @@ const { data, type } = Astro.props;
     border: 2px solid #e0efff;
   }
 
-  .type-original li.level-2:hover a,
-  .type-original li.level-1:hover a {
+  .type-original li.level-2:hover,
+  .type-original li.level-1:hover {
     color: #000000;
   }
 
@@ -105,8 +105,8 @@ const { data, type } = Astro.props;
     background: #b0d3f9;
   }
 
-  .type-zenn li.level-1 a,
-  .type-zenn li.level-2 a {
+  .type-zenn li.level-1,
+  .type-zenn li.level-2 {
     color: #65717b;
   }
 
@@ -116,7 +116,7 @@ const { data, type } = Astro.props;
   }
 
   .type-zenn li.level-2:hover:before {
-    top: 4px;
+    top: 6px;
     left: 0;
     width: 12px;
     height: 12px;
@@ -128,8 +128,8 @@ const { data, type } = Astro.props;
   .type-zenn-selected li.level-2:before {
     background: #3ea8ff;
   }
-  .type-zenn-selected li.level-1 a,
-  .type-zenn-selected li.level-2 a {
+  .type-zenn-selected li.level-1,
+  .type-zenn-selected li.level-2 {
     color: #000000d1;
   }
 
@@ -139,7 +139,7 @@ const { data, type } = Astro.props;
   }
 
   .type-zenn-selected li.level-2:hover:before {
-    top: 4px;
+    top: 6px;
     left: 0;
     width: 12px;
     height: 12px;
