@@ -51,7 +51,6 @@ export const getStaticPaths = async () => {
         title: article.frontmatter.title,
         emoji: article.frontmatter.emoji,
         topics: article.topics,
-        type: article.type,
         published: article.frontmatter.published,
         lastCommit: lastCommitDate,
         edit: `${remote}/blob/main/articles/${article.slug}.md`,
@@ -69,14 +68,14 @@ export const getStaticPaths = async () => {
     };
   });
 };
-const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, description, published, slug, edit } =
+const { relatedArticles, lastCommit, html, title, emoji, topics, nav, description, published, slug, edit } =
   Astro.props;
 ---
 
 <Layout
   title={title}
   description={description}
-  keywords={[...topics, type].map((topic) => topic.displayName)}
+  keywords={topics.map((topic) => topic.displayName)}
   ogp={astroURL(Astro).file("ogp.png")}
   canonical={published ? getZennUrl(slug) : undefined}
 >
@@ -95,7 +94,7 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, desc
     <article>
       <div class="content-main">
         <div class="topics">
-          <Topics topics={[...topics, type]} />
+          <Topics topics={topics} />
         </div>
         <Zenn html={html} />
         <a href={edit} target="_blank">
@@ -123,6 +122,8 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, type, nav, desc
     h1 {
       font-size: 24px;
       margin: 24px 0px 0px;
+
+      white-space: pre-wrap;
     }
 
     .header-emoji {

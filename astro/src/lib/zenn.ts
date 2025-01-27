@@ -26,7 +26,7 @@ type ArticleListRawResponse = {
 export type Topic = {
   name: string;
   displayName: string;
-  image: boolean;
+  path: string;
 };
 
 type ArticleListResponse = {
@@ -34,7 +34,6 @@ type ArticleListResponse = {
   contents: MarkdownInstance<Frontmatter>;
   lastCommit?: Date;
   topics: Topic[];
-  type: Topic;
 };
 
 const getArticleListRaw = async (): Promise<ArticleListRawResponse[]> => {
@@ -47,14 +46,13 @@ const getArticleListRaw = async (): Promise<ArticleListRawResponse[]> => {
 
 const getArticleList = async (): Promise<ArticleListResponse[]> => {
   const raw = await getArticleListRaw();
-  const topicNormalize = await getTopic();
+  const icons = await getTopicsMetadata();
   const enable = raw.filter((article) => article.contents.frontmatter.static === true);
   const article = enable.map(async (article) => {
     const lastCommit = await getLatestCommitTime(Path.relative("../../", article.file));
-    const topics = article.contents.frontmatter.topics.map((topic) => topicNormalize(topic));
-    const name = article.contents.frontmatter.type.trim().toLowerCase();
-    const type = typeNormalize(name);
-    return { ...article, lastCommit, topics, type };
+    const top = [...article.contents.frontmatter.topics, article.contents.frontmatter.type];
+    const topics = await Promise.all(top.map(async (name) => await icons(name)));
+    return { ...article, lastCommit, topics };
   });
   return await Promise.all(article);
 };
@@ -66,27 +64,33 @@ export const getArticleData = async () => {
   });
 };
 
-const getTopic = async () => {
+export const downloadIcon = async () => {
+  const content1 = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn-icons.tar.gz");
+  const content2 = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn.tar.gz");
+  return [content1, content2];
+};
+
+const getTopicsMetadata = async () => {
   const metadata = await getJson<Record<string, Topic>>(
     "https://raw.githubusercontent.com/fa0311/zenn-icons/refs/heads/main/metadata.json",
   );
-  const content = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn-icons.tar.gz");
-  const list = await content.list();
-  return (topic: string) => {
-    const id = topic.toLowerCase().trim();
+  const [content1, content2] = await downloadIcon();
+  return async (name: string) => {
+    const id = name.toLowerCase().trim();
+    const path = await (async () => {
+      if (await content1.access(`${id}.png`)) {
+        return `${id}.png`;
+      } else if (await content2.access(`${id}.svg`)) {
+        return `${id}.svg`;
+      } else {
+        return `topic.png`;
+      }
+    })();
     return {
       name: id,
       displayName: metadata[id]?.displayName ?? id,
-      image: list.includes(`${id}.png`),
+      path: path,
     };
-  };
-};
-
-const typeNormalize = (name: string) => {
-  return {
-    name: name,
-    displayName: `${name.charAt(0).toUpperCase()}${name.slice(1)}`,
-    image: false,
   };
 };
 
@@ -99,8 +103,7 @@ export const getTopics = async () => {
   return await cache("getTopics", async () => {
     const articles = await getArticleData();
     const topics = articles.flatMap((article) => article.topics);
-    const types = articles.map((article) => article.type);
-    return unique([...topics, ...types], (topic) => topic.name);
+    return unique(topics, (topic) => topic.name);
   });
 };
 export const pageSplit = <T1>(data: T1[]) => {
@@ -121,7 +124,6 @@ const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
       lastCommit: article.lastCommit,
       frontmatter: article.contents.frontmatter,
       topics: article.topics,
-      type: article.type,
       getContent: () => markdownToHtmlNormalized(article.contents.rawContent()),
       getRelatedArticles: () => getArticleDataRecursive(getRelatedArticles(articles, article)),
     };

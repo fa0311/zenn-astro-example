@@ -12,8 +12,7 @@ export const getStaticPaths = async () => {
   const topics = await getTopics();
   return topics.flatMap((topic) => {
     const data = articles.filter((article) => {
-      const topics = [...article.topics, article.type];
-      return topics.map((topic) => topic.name).includes(topic.name);
+      return article.topics.map((topic) => topic.name).includes(topic.name);
     });
 
     return pageSplit(data).map(({ data, index, length }) => {

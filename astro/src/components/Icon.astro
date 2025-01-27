@@ -6,18 +6,10 @@ interface Props {
   topic: Topic;
 }
 
-const getSrc = (topic: Topic) => {
-  if (topic.image) {
-    return astroURL(Astro).file(`/assets/icons/${topic.name}.png`);
-  } else {
-    return astroURL(Astro).file(`/assets/icons/topic.png`);
-  }
-};
-
 const { topic } = Astro.props;
 ---
 
-<img src={getSrc(topic).pathname} alt={topic.displayName} />
+<img src={astroURL(Astro).file(`/assets/icons/${topic.path}`).pathname} alt={topic.displayName} />
 
 <style>
   img {

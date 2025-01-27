@@ -19,10 +19,9 @@ export const GET: APIRoute = async ({ url }) => {
   topics.forEach((topic) => {
     sitemap.write({ url: `/topics/${topic}`, changefreq: "monthly", priority: 0.5 });
     const data = articles.filter((article) => {
-      const articleTopics = article.frontmatter.topics;
-      return articleTopics.includes(topic) || article.frontmatter.type === topic;
+      return article.topics.some((t) => t.name === topic.name);
     });
-    pageSplit(articles).forEach(({ index }) => {
+    pageSplit(data).forEach(({ index }) => {
       sitemap.write({ url: `/topics/${topic}/${index}`, changefreq: "monthly", priority: 0.5 });
     });
   });

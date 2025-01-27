@@ -39,7 +39,7 @@ export const getGzip = async (url: string) => {
     return Buffer.from(await res.arrayBuffer());
   });
 
-  const cache = await getCached(name, true);
+  const cache = await getCached(`gz/${name}`, true);
   if ((await fs.readdir(cache.pathname)).length === 0) {
     await new Promise(async (resolve, reject) => {
       const gunzip = zlib.createGunzip();
@@ -59,5 +59,20 @@ export const getGzip = async (url: string) => {
       return p.then(() => true).catch(() => false);
     },
     list: async () => await fs.readdir(cache.pathname),
+  };
+};
+
+export const gzipMarge = async (crud: Awaited<ReturnType<typeof getGzip>>[]) => {
+  const wait = (p: string) => Promise.all(crud.map(async (c) => await c.access(p)));
+  return {
+    access: async (path: string) => {
+      return (await wait(path)).some((p) => p);
+    },
+    read: async (path: string) => {
+      return crud[(await wait(path)).findIndex((p) => p)].read(path);
+    },
+    list: async () => {
+      return (await Promise.all(crud.map(async (c) => await c.list()))).flat();
+    },
   };
 };
