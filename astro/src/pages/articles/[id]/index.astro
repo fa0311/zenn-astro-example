@@ -2,7 +2,7 @@
 import "zenn-content-css";
 import Articles from "../../../components/Articles.astro";
 import Emoji from "../../../components/Emoji.astro";
-import Github from "../../../components/Github.astro";
+import Github from "../../../components/icon/Github.astro";
 import Navigation from "../../../components/Navigation.astro";
 import Topics from "../../../components/Topics.astro";
 import Zenn from "../../../components/Zenn.astro";
@@ -99,7 +99,9 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, nav, descriptio
         <Zenn html={html} />
         <a href={edit} target="_blank">
           <div class="edit-github">
-            <Github />
+            <div class="github-icon">
+              <Github />
+            </div>
             <p class="edit-github-text">GitHubで編集を提案</p>
           </div>
         </a>
@@ -253,6 +255,11 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, nav, descriptio
     a:focus .edit-github {
       border: 1px solid #3ea8ff;
       box-shadow: 0 0 0 2.5px #bfdcff;
+    }
+
+    .github-icon {
+      width: 20px;
+      height: 20px;
     }
   </style>
 </Layout>

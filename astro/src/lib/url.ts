@@ -19,6 +19,7 @@ const normalize = (url: URL, slash: boolean) => {
 const urlResolve = (pathname: string, origin: string, slash: boolean) => {
   return {
     url: new URL(`${origin}/${pathname}${slash ? "/" : ""}`),
+    slash: slash,
     file: (path: string) => {
       if (path.startsWith("/")) {
         return normalize(new URL(`.${path}`, `${origin}/`), false);
