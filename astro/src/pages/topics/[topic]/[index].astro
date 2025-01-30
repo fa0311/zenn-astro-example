@@ -5,11 +5,11 @@ import Icon from "../../../components/Icon.astro";
 import Pagination from "../../../components/Pagination.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { astroURL } from "../../../lib/url";
-import { getArticleData, getTopics, pageSplit } from "../../../lib/zenn";
+import { getArticleData, getTopicsName, pageSplit } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
-  const topics = await getTopics();
+  const topics = await getTopicsName();
   return topics.flatMap((topic) => {
     const data = articles.filter((article) => {
       return article.topics.map((topic) => topic.name).includes(topic.name);

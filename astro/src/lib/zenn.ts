@@ -99,13 +99,22 @@ const unique = <T1, T2>(array: T1[], callback: (item: T1) => T2) => {
   return u.map((name) => array.find((item) => callback(item) === name)!);
 };
 
-export const getTopics = async () => {
-  return await cache("getTopics", async () => {
+export const getTopicsName = async () => {
+  return await cache("getTopicsName", async () => {
     const articles = await getArticleData();
     const topics = articles.flatMap((article) => article.topics);
     return unique(topics, (topic) => topic.name);
   });
 };
+
+export const getTopicsPath = async () => {
+  return await cache("getTopicsPath", async () => {
+    const articles = await getArticleData();
+    const topics = articles.flatMap((article) => article.topics);
+    return unique(topics, (topic) => topic.path);
+  });
+};
+
 export const pageSplit = <T1>(data: T1[]) => {
   const length = Math.max(Math.ceil(data.length / 48), 1);
   return Array.from({ length }).map((_, i) => {

@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { gzipMarge } from "../../../lib/assets";
-import { downloadIcon, getTopics } from "../../../lib/zenn";
+import { downloadIcon, getTopicsPath } from "../../../lib/zenn";
 
 export const GET: APIRoute = async ({ params }) => {
   const icons = await gzipMarge(await downloadIcon());
@@ -13,8 +13,7 @@ export const GET: APIRoute = async ({ params }) => {
 };
 
 export const getStaticPaths = async () => {
-  const topics = await getTopics();
-
+  const topics = await getTopicsPath();
   return topics.map((topic) => {
     return { params: { name: topic.path } };
   });

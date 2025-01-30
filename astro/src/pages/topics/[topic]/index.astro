@@ -1,9 +1,9 @@
 ---
 import { astroURL } from "../../../lib/url";
-import { getTopics } from "../../../lib/zenn";
+import { getTopicsName } from "../../../lib/zenn";
 
 export const getStaticPaths = async () => {
-  const topics = await getTopics();
+  const topics = await getTopicsName();
   return topics.map((topic) => {
     return {
       params: { topic: topic.name },
