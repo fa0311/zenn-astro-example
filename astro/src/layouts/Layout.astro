@@ -32,7 +32,7 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
     <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
     <meta property="twitter:card" content={ogp ? "summary_large_image" : "summary"} />
     <meta property="og:url" content={url ?? astroURL(Astro).url} />
-    <meta property=" og:title" content={title} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
     <GoogleAnalytics id={import.meta.env.GA_MEASUREMENT_ID} />
