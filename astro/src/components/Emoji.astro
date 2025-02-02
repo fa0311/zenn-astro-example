@@ -9,3 +9,17 @@ const { emoji } = Astro.props;
 ---
 
 <div set:html={twemoji.parse(emoji, { folder: "svg", ext: ".svg" })} />
+
+<style>
+  div {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<style is:global>
+  .emoji {
+    width: 100%;
+    height: 100%;
+  }
+</style>

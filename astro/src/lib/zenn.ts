@@ -5,7 +5,7 @@ import markdownToHtml from "./markdownToHtml";
 
 import * as cheerio from "cheerio";
 import "zenn-content-css";
-import { getGzip, getJson } from "./assets";
+import { getJson } from "./assets";
 import { cache } from "./cache";
 import { getLatestCommitTime } from "./git";
 
@@ -21,12 +21,6 @@ type Frontmatter = {
 type ArticleListRawResponse = {
   file: string;
   contents: MarkdownInstance<Frontmatter>;
-};
-
-export type Topic = {
-  name: string;
-  displayName: string;
-  path: string;
 };
 
 type ArticleListResponse = {
@@ -64,33 +58,24 @@ export const getArticleData = async () => {
   });
 };
 
-export const downloadIcon = async () => {
-  const content1 = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn-icons.tar.gz");
-  const content2 = await getGzip("https://github.com/fa0311/zenn-icons/releases/download/latest/zenn.tar.gz");
-  return [content1, content2];
+export type Topic = {
+  name: string;
+  displayName: string;
+  path: string;
 };
 
 const getTopicsMetadata = async () => {
-  const metadata = await getJson<Record<string, Topic>>(
-    "https://raw.githubusercontent.com/fa0311/zenn-icons/refs/heads/main/metadata.json",
-  );
-  const [content1, content2] = await downloadIcon();
+  const base = "https://cdn.jsdelivr.net/gh/fa0311/zenn-icons@main/metadata.json";
+  const metadata = await getJson<Record<string, { imageUrl: string; displayName: string }>>(base);
   return async (name: string) => {
     const id = name.toLowerCase().trim();
-    const path = await (async () => {
-      if (await content1.access(`${id}.png`)) {
-        return `${id}.png`;
-      } else if (await content2.access(`${id}.svg`)) {
-        return `${id}.svg`;
-      } else {
-        return `topic.png`;
-      }
-    })();
-    return {
-      name: id,
-      displayName: metadata[id]?.displayName ?? id,
-      path: path,
-    };
+    if (id === "idea" || id === "tech") {
+      return { name: id, displayName: name, path: new URL(`dist/zenn/${id}.svg`, base).href };
+    } else if (metadata[id] == undefined) {
+      return { name: id, displayName: name, path: new URL("dist/zenn/topic.png", base).href };
+    } else {
+      return { name: id, displayName: metadata[id].displayName, path: new URL(`dist/images/${id}.webp`, base).href };
+    }
   };
 };
 
@@ -99,19 +84,11 @@ const unique = <T1, T2>(array: T1[], callback: (item: T1) => T2) => {
   return u.map((name) => array.find((item) => callback(item) === name)!);
 };
 
-export const getTopicsName = async () => {
+export const getTopics = async () => {
   return await cache("getTopicsName", async () => {
     const articles = await getArticleData();
     const topics = articles.flatMap((article) => article.topics);
     return unique(topics, (topic) => topic.name);
-  });
-};
-
-export const getTopicsPath = async () => {
-  return await cache("getTopicsPath", async () => {
-    const articles = await getArticleData();
-    const topics = articles.flatMap((article) => article.topics);
-    return unique(topics, (topic) => topic.path);
   });
 };
 

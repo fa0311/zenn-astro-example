@@ -1,5 +1,4 @@
 ---
-import { astroURL } from "../lib/url";
 import { type Topic } from "../lib/zenn";
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 const { topic } = Astro.props;
 ---
 
-<img src={astroURL(Astro).file(`/assets/icons/${topic.path}`).pathname} alt={topic.displayName} />
+<img src={topic.path} alt={topic.displayName} />
 
 <style>
   img {

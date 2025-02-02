@@ -3,6 +3,9 @@ import * as path from "path";
 
 const cacheData: Record<string, any> = {};
 export const cache = <T>(key: string, callback: () => T) => {
+  if (import.meta.env.DEV) {
+    return callback();
+  }
   if (!cacheData[key]) {
     cacheData[key] = callback();
   }
@@ -23,8 +26,6 @@ export const getCached = async (key: string, isDir: boolean = false) => {
   }
   return new URL(`${dir}/${key}`, import.meta.url);
 };
-
-type WritableType = Buffer<ArrayBufferLike>;
 
 export const fileCache = async (
   key: string,

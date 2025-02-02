@@ -15,9 +15,11 @@ const { data, type } = Astro.props;
   <ol>
     {
       data.map(({ title, slug, level }) => (
-        <a href={`#${slug}`}>
-          <li class:list={[`level-${level}`]}>{title}</li>
-        </a>
+        <li class:list={[`level-${level}`]}>
+          <a class="link" href={`#${slug}`}>
+            {title}
+          </a>
+        </li>
       ))
     }
   </ol>
@@ -144,5 +146,10 @@ const { data, type } = Astro.props;
     width: 12px;
     height: 12px;
     background: #3ea8ff;
+  }
+
+  .link {
+    display: "inline-block";
+    width: 100%;
   }
 </style>
