@@ -1,11 +1,11 @@
 import type { APIRoute } from "astro";
 import { SitemapStream, streamToPromise } from "sitemap";
-import { getArticleData, getTopicsName, pageSplit } from "../lib/zenn";
+import { getArticleData, getTopics, pageSplit } from "../lib/zenn";
 
 export const GET: APIRoute = async ({ url }) => {
   const sitemap = new SitemapStream({ hostname: url.origin });
   const articles = await getArticleData();
-  const topics = await getTopicsName();
+  const topics = await getTopics();
   sitemap.write({ url: "/", changefreq: "daily", priority: 1 });
 
   articles.forEach((article) => {
