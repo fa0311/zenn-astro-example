@@ -69,10 +69,14 @@ const getTopicsMetadata = async () => {
   const metadata = await getJson<Record<string, { imageUrl: string; displayName: string }>>(base);
   return async (name: string) => {
     const id = name.toLowerCase().trim();
-    if (id === "idea" || id === "tech") {
-      return { name: id, displayName: name, path: new URL(`dist/zenn/${id}.svg`, base).href };
+    if (id === "idea") {
+      return { name: id, displayName: "Idea", path: new URL(`dist/zenn/idea.svg`, base).href };
+    } else if (id === "tech") {
+      return { name: id, displayName: "Tech", path: new URL(`dist/zenn/tech.svg`, base).href };
     } else if (metadata[id] == undefined) {
-      return { name: id, displayName: name, path: new URL("dist/zenn/topic.png", base).href };
+      return { name: id, displayName: name, path: new URL("dist/zenn/topic.webp", base).href };
+    } else if (new URL(metadata[id].imageUrl).pathname === "/images/topic.png") {
+      return { name: id, displayName: metadata[id].displayName, path: new URL("dist/zenn/topic.webp", base).href };
     } else {
       return { name: id, displayName: metadata[id].displayName, path: new URL(`dist/images/${id}.webp`, base).href };
     }
