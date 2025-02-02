@@ -1,9 +1,16 @@
+export const astroBaseURL = () => {
+  if (import.meta.env.BASE_URL.endsWith("/")) {
+    return import.meta.env.BASE_URL.slice(0, -1);
+  } else {
+    return import.meta.env.BASE_URL;
+  }
+};
+
 export const astroURL = (astro: AstroType) => {
-  const origin = `${astro.url.origin}${import.meta.env.BASE_URL}`;
-  const slice = (url: string) => url.slice(sliceSlash(import.meta.env.BASE_URL).length + 1);
-  const sliceSlash = (url: string) => (url.endsWith("/") ? url.slice(0, -1) : url);
+  const origin = `${astro.url.origin}${astroBaseURL()}`;
+  const slice = (url: string) => url.slice(astroBaseURL().length + 1);
   const slash = !import.meta.env.DEV && import.meta.env.TRAILING_SLASH === "true";
-  return urlResolve(slice(astro.url.pathname), sliceSlash(origin), slash);
+  return urlResolve(slice(astro.url.pathname), origin, slash);
 };
 export type AstroType = { url: URL };
 export type FixAstroURL = ReturnType<typeof astroURL>;
