@@ -29,6 +29,12 @@ export const getStaticPaths = async () => {
     })();
 
     const content = article.getContent();
+
+    const description = (() => {
+      const text = content.description();
+      return text.length > 120 ? `${text.slice(0, 117)}...` : text;
+    })();
+
     if (article.frontmatter.published) {
       const md = [":::message", `この記事は <${getZennUrl(article.slug)}> の複製です。`, ":::"];
       const note = markdownToHtmlNormalized(md.join("\n"));
@@ -36,11 +42,6 @@ export const getStaticPaths = async () => {
     }
     const html = content.contents();
     const nav = content.headings().filter((heading) => heading.level <= 2);
-
-    const description = (() => {
-      const text = content.description();
-      return text.length > 120 ? `${text.slice(0, 117)}...` : text;
-    })();
 
     return {
       params: { id: article.slug },

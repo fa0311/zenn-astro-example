@@ -49,7 +49,7 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
       <aside class="site-header">
         <nav>
           <a href=`${import.meta.env.BASE_URL}` class="site-logo">
-            <div class="site-icon">
+            <div class="site-icon" style={`border-radius: ${import.meta.env.SITE_ICON_RADIUS}`}>
               <SiteIcon text={import.meta.env.SITE_ICON} alt={import.meta.env.SITE_NAME} />
             </div>
             <p class="site-name">{import.meta.env.SITE_NAME}</p>
@@ -75,108 +75,108 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
       </aside>
     </header>
     <slot />
-
     <footer>
       <div class="site-footer">
         <p>© {new Date().getFullYear()} {astroURL(Astro).url.hostname}</p>
       </div>
-
-      <style>
-        html {
-          height: 100%;
-          font-family: "Meiryo", "sans-serif", "Segoe UI Emoji";
-        }
-
-        body {
-          height: 100%;
-          margin: 0;
-          line-height: 1.6;
-          background: #edf2f7;
-          color: #000000d1;
-          word-break: break-word;
-          word-wrap: break-word;
-          line-break: strict;
-        }
-
-        header {
-          background: #ffffff;
-          padding: 8px 16px;
-          top: 0;
-          border-bottom: 1px solid #e4edf4;
-        }
-
-        @media (max-width: 576px) {
-          header {
-            padding: 8px;
-          }
-        }
-
-        footer {
-          position: sticky;
-          top: 100vh;
-          margin: 40px 0 0 0;
-          background-color: #f8f9fa;
-          padding: 20px 0;
-          text-align: center;
-        }
-
-        .site-header,
-        .site-footer {
-          max-width: 1120px;
-          margin: 0 auto;
-        }
-
-        nav {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .site-logo {
-          display: inline-flex;
-          padding: 10px;
-        }
-        .site-icon {
-          width: 35px;
-          height: 35px;
-        }
-        .site-name {
-          display: inline;
-          font-size: 1.5rem;
-          font-weight: bold;
-          margin: auto 0 auto 10px;
-        }
-
-        .site-nav {
-          display: flex;
-        }
-
-        .external-icon {
-          color: #65717b;
-          padding: 8px;
-          width: 42px;
-          height: 42px;
-        }
-      </style>
-
-      <style is:global>
-        a {
-          color: #000000d1;
-          text-decoration: none;
-        }
-        ol,
-        li {
-          list-style-type: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        *,
-        :after,
-        :before {
-          box-sizing: border-box;
-        }
-      </style>
     </footer>
   </body>
 </html>
+
+<style>
+  html {
+    height: 100%;
+    font-family: "Meiryo", "sans-serif", "Segoe UI Emoji";
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    line-height: 1.6;
+    background: #edf2f7;
+    color: #000000d1;
+    word-break: break-word;
+    word-wrap: break-word;
+    line-break: strict;
+  }
+
+  header {
+    background: #ffffff;
+    padding: 8px 16px;
+    top: 0;
+    border-bottom: 1px solid #e4edf4;
+  }
+
+  @media (max-width: 576px) {
+    header {
+      padding: 8px;
+    }
+  }
+
+  footer {
+    position: sticky;
+    top: 100vh;
+    margin: 40px 0 0 0;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .site-header,
+  .site-footer {
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-logo {
+    display: inline-flex;
+    padding: 10px;
+  }
+  .site-icon {
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+  }
+  .site-name {
+    display: inline;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: auto 0 auto 10px;
+  }
+
+  .site-nav {
+    display: flex;
+  }
+
+  .external-icon {
+    color: #65717b;
+    padding: 8px;
+    width: 42px;
+    height: 42px;
+  }
+</style>
+
+<style is:global>
+  a {
+    color: #000000d1;
+    text-decoration: none;
+  }
+  ol,
+  li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  *,
+  :after,
+  :before {
+    box-sizing: border-box;
+  }
+</style>

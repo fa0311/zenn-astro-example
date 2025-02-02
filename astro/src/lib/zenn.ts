@@ -183,7 +183,7 @@ export const markdownToHtmlNormalized = (raw: string) => {
     append: (data: string) => $("body").append(data),
     prepend: (data: string) => $("body").prepend(data),
     contents: () => $("body").html()!,
-    description: () => $("p").first().text(),
+    description: () => $("p").first().text().replaceAll("\n", ""),
     headings: () => headingsNormalize(headings),
   };
 };
