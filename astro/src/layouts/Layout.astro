@@ -10,10 +10,10 @@ interface Props {
   canonical?: URL;
 }
 
-import Emoji from "../components/Emoji.astro";
 import Feed from "../components/icon/Feed.astro";
 import Github from "../components/icon/Github.astro";
 import Twitter from "../components/icon/Twitter.astro";
+import SiteIcon from "../components/SiteIcon.astro";
 import { astroURL } from "../lib/url";
 
 const { title, description, keywords, ogp, robots, canonical, url } = Astro.props;
@@ -50,7 +50,7 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
         <nav>
           <a href=`${import.meta.env.BASE_URL}` class="site-logo">
             <div class="site-icon">
-              <Emoji emoji={import.meta.env.SITE_ICON} />
+              <SiteIcon text={import.meta.env.SITE_ICON} alt={import.meta.env.SITE_NAME} />
             </div>
             <p class="site-name">{import.meta.env.SITE_NAME}</p>
           </a>

@@ -1,0 +1,19 @@
+---
+import Emoji from "./Emoji.astro";
+
+interface Props {
+  text: string;
+  alt?: string;
+}
+
+const { text, alt } = Astro.props;
+---
+
+{text.includes("/") ? <img src={text} alt={alt ?? text} /> : <Emoji emoji={text} />}
+
+<style>
+  img {
+    width: 100%;
+    height: 100%;
+  }
+</style>

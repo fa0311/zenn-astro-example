@@ -1,3 +1,5 @@
+import SiteIcon from "./SiteIcon";
+
 export default (title: string) => {
   return (
     <div
@@ -58,7 +60,8 @@ export default (title: string) => {
               fontWeight: "bold",
             }}
           >
-            {`${import.meta.env.SITE_ICON}${import.meta.env.SITE_NAME}`}
+            {SiteIcon({ text: import.meta.env.SITE_ICON })}
+            <p>{import.meta.env.SITE_NAME}</p>
           </p>
         </div>
       </div>
