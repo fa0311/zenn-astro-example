@@ -24,7 +24,8 @@ const { title, description, type, keywords, ogp, robots, canonical, url, modifie
 const schema = {
   "@context": "https://schema.org",
   "@type": type,
-  name: title,
+  name: import.meta.env.SITE_NAME,
+  headline: title,
   description: description,
   keywords: keywords,
   url: url ?? astroURL(Astro).url,
@@ -60,7 +61,6 @@ const schema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
-    <GoogleAnalytics id={import.meta.env.GA_MEASUREMENT_ID} />
     <meta property="og:image" content={ogp ? ogp.href : astroURL(Astro).file("/ogp.png")} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical ?? url ?? astroURL(Astro).url} />
@@ -68,6 +68,7 @@ const schema = {
     <link rel="alternate" type="application/rss+xml" title="新着記事" href=`${ astroURL(Astro).file("/feed.xml")}` />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <title>{title}</title>
+    <GoogleAnalytics id={import.meta.env.GA_MEASUREMENT_ID} />
   </head>
 
   <body>
