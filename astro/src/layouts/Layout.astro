@@ -57,6 +57,7 @@ const schema = {
     <meta property="og:type" content={ogp ? "article" : "website"} />
     <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
     <meta property="twitter:card" content={ogp ? "summary_large_image" : "summary"} />
+    <meta property="twitter:site" content={import.meta.env.TWITTER_USER_NAME} />
     <meta property="og:url" content={url ?? astroURL(Astro).url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
