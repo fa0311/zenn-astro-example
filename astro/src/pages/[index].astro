@@ -4,7 +4,7 @@ import Articles from "../components/Articles.astro";
 import Pagination from "../components/Pagination.astro";
 import Layout from "../layouts/Layout.astro";
 import { astroURL } from "../lib/url";
-import { getArticleData, pageSplit } from "../lib/zenn";
+import { getArticleData, getRelatedTopics, pageSplit } from "../lib/zenn";
 
 export const getStaticPaths = async () => {
   const data = await getArticleData();
@@ -14,6 +14,7 @@ export const getStaticPaths = async () => {
       props: {
         index: index,
         length: length,
+        keywords: getRelatedTopics(data.flatMap((article) => article.topics)).slice(0, 5),
         data: data.map((article) => {
           return {
             slug: article.slug,
@@ -25,13 +26,14 @@ export const getStaticPaths = async () => {
     };
   });
 };
-const { data, index, length } = Astro.props;
+const { data, index, keywords, length } = Astro.props;
 ---
 
 <Layout
-  title="Articles"
-  description="記事一覧"
-  keywords={["記事一覧"]}
+  title={`${import.meta.env.SITE_NAME} - ${import.meta.env.SITE_CAPTION}`}
+  description={import.meta.env.SITE_DESCRIPTION}
+  type="WebSite"
+  keywords={keywords.map((topic) => topic.displayName)}
   robots="nosnippet"
   url={index === 1 ? astroURL(Astro).dir("..") : undefined}
 >

@@ -28,6 +28,7 @@ const urlResolve = (pathname: string, origin: string, slash: boolean) => {
   return {
     url: new URL(`${origin}/${pathname}${slash ? "/" : ""}`),
     slash: slash,
+    pathname: pathname,
     file: (path: string) => {
       if (path.startsWith("/")) {
         return normalize(new URL(`.${path}`, `${origin}/`), false);
@@ -43,4 +44,27 @@ const urlResolve = (pathname: string, origin: string, slash: boolean) => {
       }
     },
   };
+};
+
+export const getZennArticleUrl = (slug: string) => {
+  if (import.meta.env.ZENN_USER_NAME !== undefined) {
+    return new URL(`https://zenn.dev/${import.meta.env.ZENN_USER_NAME}/articles/${slug}`);
+  }
+};
+
+export const getZennUrl = () => {
+  if (import.meta.env.ZENN_USER_NAME !== undefined) {
+    return new URL(`https://zenn.dev/${import.meta.env.ZENN_USER_NAME}`);
+  }
+};
+
+export const getTwitterUrl = () => {
+  if (import.meta.env.TWITTER_USER_NAME !== undefined) {
+    return new URL(`https://twitter.com/${import.meta.env.TWITTER_USER_NAME}`);
+  }
+};
+export const getGitHubUrl = () => {
+  if (import.meta.env.GITHUB_USER_NAME !== undefined) {
+    return new URL(`https://github.com/${import.meta.env.GITHUB_USER_NAME}`);
+  }
 };

@@ -7,7 +7,7 @@ import * as cheerio from "cheerio";
 import "zenn-content-css";
 import { getJson } from "./assets";
 import { cache } from "./cache";
-import { getLatestCommitTime } from "./git";
+import { getFirstCommitTime, getLatestCommitTime } from "./git";
 import { astroBaseURL } from "./url";
 
 type Frontmatter = {
@@ -28,6 +28,7 @@ type ArticleListResponse = {
   file: string;
   contents: MarkdownInstance<Frontmatter>;
   lastCommit?: Date;
+  firstCommit?: Date;
   topics: Topic[];
 };
 
@@ -45,9 +46,10 @@ const getArticleList = async (): Promise<ArticleListResponse[]> => {
   const enable = raw.filter((article) => article.contents.frontmatter.static === true);
   const article = enable.map(async (article) => {
     const lastCommit = await getLatestCommitTime(Path.relative("../../", article.file));
+    const firstCommit = await getFirstCommitTime(Path.relative("../../", article.file));
     const top = [...article.contents.frontmatter.topics, article.contents.frontmatter.type];
     const topics = await Promise.all(top.map(async (name) => await icons(name)));
-    return { ...article, lastCommit, topics };
+    return { ...article, lastCommit, firstCommit, topics };
   });
   return await Promise.all(article);
 };
@@ -104,8 +106,12 @@ export const pageSplit = <T1>(data: T1[]) => {
   });
 };
 
-export const getZennUrl = (slug: string) => {
-  return new URL(`https://zenn.dev/${import.meta.env.ZENN_USER_NAME}/articles/${slug}`);
+export const getRelatedTopics = (topics: Topic[]) => {
+  return unique(topics, (topic) => topic.name).sort((a, b) => {
+    const aCount = topics.filter((topic) => topic.name === a.name).length;
+    const bCount = topics.filter((topic) => topic.name === b.name).length;
+    return bCount - aCount;
+  });
 };
 
 const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
@@ -113,6 +119,7 @@ const getArticleDataRecursive = (articles: ArticleListResponse[]) => {
     return {
       slug: Path.basename(article.file, ".md"),
       lastCommit: article.lastCommit,
+      firstCommit: article.firstCommit,
       frontmatter: article.contents.frontmatter,
       topics: article.topics,
       getContent: () => markdownToHtmlNormalized(article.contents.rawContent()),

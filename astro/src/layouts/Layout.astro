@@ -2,21 +2,46 @@
 import { GoogleAnalytics } from "astro-google-analytics";
 interface Props {
   title: string;
+  description: string;
+  type: string;
   keywords: string[];
   url?: URL;
   ogp?: URL;
-  description?: string;
   robots?: string;
   canonical?: URL;
+  modifiedDate?: Date;
+  publishedDate?: Date;
 }
 
 import Feed from "../components/icon/Feed.astro";
 import Github from "../components/icon/Github.astro";
 import Twitter from "../components/icon/Twitter.astro";
 import SiteIcon from "../components/SiteIcon.astro";
-import { astroURL } from "../lib/url";
+import { astroURL, getGitHubUrl, getTwitterUrl, getZennUrl } from "../lib/url";
 
-const { title, description, keywords, ogp, robots, canonical, url } = Astro.props;
+const { title, description, type, keywords, ogp, robots, canonical, url, modifiedDate, publishedDate } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": type,
+  name: title,
+  description: description,
+  keywords: keywords,
+  url: url ?? astroURL(Astro).url,
+  image: ogp ? ogp.href : astroURL(Astro).file("/ogp.png"),
+  author: {
+    "@type": "Person",
+    name: import.meta.env.SITE_AUTHOR_NAME,
+    url: astroURL(Astro).dir("/"),
+  },
+  datePublished: publishedDate ?? modifiedDate ?? undefined,
+  dateModified: modifiedDate ?? publishedDate ?? undefined,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": url ?? astroURL(Astro).url,
+  },
+  sameAs: [getZennUrl(), getTwitterUrl(), getGitHubUrl()].filter((url) => url !== undefined),
+};
 ---
 
 <!doctype html>
@@ -26,7 +51,7 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href={`${astroURL(Astro).file("/favicon.ico")}`} />
     <meta name="generator" content={Astro.generator} />
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={description} />
     <meta name="keywords" content={keywords.join(",")} />
     <meta property="og:type" content={ogp ? "article" : "website"} />
     <meta property="og:site_name" content={import.meta.env.SITE_NAME} />
@@ -36,11 +61,12 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
     <GoogleAnalytics id={import.meta.env.GA_MEASUREMENT_ID} />
-    {ogp && <meta property="og:image" content={ogp.href} />}
+    <meta property="og:image" content={ogp ? ogp.href : astroURL(Astro).file("/ogp.png")} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical ?? url ?? astroURL(Astro).url} />
     <link rel="sitemap" type="application/xml" href=`${ astroURL(Astro).file("/sitemap-index.xml")}` />
-
+    <link rel="alternate" type="application/rss+xml" title="新着記事" href=`${ astroURL(Astro).file("/feed.xml")}` />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <title>{title}</title>
   </head>
 
@@ -55,16 +81,24 @@ const { title, description, keywords, ogp, robots, canonical, url } = Astro.prop
             <p class="site-name">{import.meta.env.SITE_NAME}</p>
           </a>
           <div class="site-nav">
-            <a href="https://github.com/fa0311" target="_blank">
-              <div class="external-icon">
-                <Github />
-              </div>
-            </a>
-            <a href="https://twitter.com/faa0311" target="_blank">
-              <div class="external-icon">
-                <Twitter />
-              </div>
-            </a>
+            {
+              import.meta.env.GITHUB_USER_NAME && (
+                <a href={`https://github.com/${import.meta.env.GITHUB_USER_NAME}`} target="_blank">
+                  <div class="external-icon">
+                    <Github />
+                  </div>
+                </a>
+              )
+            }
+            {
+              import.meta.env.TWITTER_USER_NAME && (
+                <a href={`https://twitter.com/${import.meta.env.TWITTER_USER_NAME}`} target="_blank">
+                  <div class="external-icon">
+                    <Twitter />
+                  </div>
+                </a>
+              )
+            }
             <a href={astroURL(Astro).file("/feed.xml")} target="_blank">
               <div class="external-icon">
                 <Feed />

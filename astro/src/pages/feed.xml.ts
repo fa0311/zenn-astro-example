@@ -6,7 +6,7 @@ import { getArticleData } from "../lib/zenn";
 export const GET: APIRoute = async ({ url }) => {
   const data = await getArticleData();
   return rss({
-    title: import.meta.env.SITE_NAME,
+    title: `${import.meta.env.SITE_NAME} - ${import.meta.env.SITE_CAPTION}`,
     description: import.meta.env.SITE_DESCRIPTION,
     site: astroURL({ url }).dir("/"),
     trailingSlash: astroURL({ url }).slash,
@@ -15,7 +15,7 @@ export const GET: APIRoute = async ({ url }) => {
         link: astroURL({ url }).dir(`/articles/${article.slug}`).href,
         title: article.frontmatter.title,
         description: article.getContent().description(),
-        pubDate: article.lastCommit,
+        pubDate: article.firstCommit,
         categories: article.topics.map((topic) => topic.name),
         trailingSlash: astroURL({ url }).slash,
       }))

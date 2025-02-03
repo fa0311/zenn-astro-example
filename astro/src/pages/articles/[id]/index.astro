@@ -8,8 +8,15 @@ import Topics from "../../../components/Topics.astro";
 import Zenn from "../../../components/Zenn.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { getRemoteUrl } from "../../../lib/git";
-import { astroURL } from "../../../lib/url";
-import { getArticleData, getZennUrl, markdownToHtmlNormalized } from "../../../lib/zenn";
+import { astroURL, getZennArticleUrl } from "../../../lib/url";
+import { getArticleData, markdownToHtmlNormalized } from "../../../lib/zenn";
+
+export const dateToString = (date: Date) => {
+  const y = date.getFullYear().toString();
+  const m = (date.getMonth() + 1).toString().padStart(2, "0");
+  const d = date.getDate().toString().padStart(2, "0");
+  return `${y}/${m}/${d}`;
+};
 
 export const getStaticPaths = async () => {
   const articles = await getArticleData();
@@ -20,23 +27,14 @@ export const getStaticPaths = async () => {
 
   return articles.map((article) => {
     const relatedArticles = article.getRelatedArticles().slice(0, 6);
-    const lastCommit = article.lastCommit ?? new Date();
-    const lastCommitDate = (() => {
-      const y = lastCommit.getFullYear().toString();
-      const m = (lastCommit.getMonth() + 1).toString().padStart(2, "0");
-      const d = lastCommit.getDate().toString().padStart(2, "0");
-      return `${y}/${m}/${d}`;
-    })();
-
     const content = article.getContent();
-
     const description = (() => {
       const text = content.description();
       return text.length > 120 ? `${text.slice(0, 117)}...` : text;
     })();
 
     if (article.frontmatter.published) {
-      const md = [":::message", `この記事は <${getZennUrl(article.slug)}> の複製です。`, ":::"];
+      const md = [":::message", `この記事は <${getZennArticleUrl(article.slug)}> の複製です。`, ":::"];
       const note = markdownToHtmlNormalized(md.join("\n"));
       content.prepend(note.contents());
     }
@@ -53,7 +51,8 @@ export const getStaticPaths = async () => {
         emoji: article.frontmatter.emoji,
         topics: article.topics,
         published: article.frontmatter.published,
-        lastCommit: lastCommitDate,
+        lastCommit: article.lastCommit ?? new Date(),
+        firstCommit: article.firstCommit ?? new Date(),
         edit: `${remote}/blob/main/articles/${article.slug}.md`,
         nav: nav.map((heading) => ({
           title: heading.text,
@@ -69,16 +68,31 @@ export const getStaticPaths = async () => {
     };
   });
 };
-const { relatedArticles, lastCommit, html, title, emoji, topics, nav, description, published, slug, edit } =
-  Astro.props;
+const {
+  relatedArticles,
+  lastCommit,
+  firstCommit,
+  html,
+  title,
+  emoji,
+  topics,
+  nav,
+  description,
+  published,
+  slug,
+  edit,
+} = Astro.props;
 ---
 
 <Layout
   title={title}
   description={description}
+  type="TechArticle"
   keywords={topics.map((topic) => topic.displayName)}
   ogp={astroURL(Astro).file("ogp.png")}
-  canonical={published ? getZennUrl(slug) : undefined}
+  canonical={published ? getZennArticleUrl(slug) : undefined}
+  publishedDate={firstCommit}
+  modifiedDate={lastCommit}
 >
   <header class="header-content">
     <div class="header-emoji">
@@ -88,7 +102,12 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, nav, descriptio
       <h1>{title}</h1>
     </div>
     <div class="title-content">
-      <p class="title-date">{lastCommit}に更新</p>
+      <p class="title-date">{dateToString(firstCommit)}に公開</p>
+      {
+        dateToString(firstCommit) !== dateToString(lastCommit) && (
+          <p class="title-date">{dateToString(lastCommit)}に更新</p>
+        )
+      }
     </div>
   </header>
   <main>
@@ -116,10 +135,14 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, nav, descriptio
       </aside>
     </article>
   </main>
-  <section class="related-articles-content">
-    <h2>Read next</h2>
-    <Articles type="list" data={relatedArticles} />
-  </section>
+  {
+    relatedArticles.length > 0 && (
+      <section class="related-articles-content">
+        <h2>Read next</h2>
+        <Articles type="list" data={relatedArticles} />
+      </section>
+    )
+  }
 
   <style>
     h1 {
@@ -173,10 +196,17 @@ const { relatedArticles, lastCommit, html, title, emoji, topics, nav, descriptio
     .title-content {
       display: flex;
       justify-content: center;
+      gap: 12px;
     }
 
     .title-date {
       color: #535e67;
+    }
+
+    @media (max-width: 920px) {
+      .title-content .title-date:nth-child(2) {
+        display: none;
+      }
     }
 
     .nav-title {
