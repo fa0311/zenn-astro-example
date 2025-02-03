@@ -8,6 +8,7 @@ import "zenn-content-css";
 import { getJson } from "./assets";
 import { cache } from "./cache";
 import { getFirstCommitTime, getLatestCommitTime } from "./git";
+import { convertExt } from "./path";
 import { astroBaseURL } from "./url";
 
 type Frontmatter = {
@@ -171,7 +172,7 @@ export const markdownToHtmlNormalized = (raw: string) => {
   const $ = cheerio.load(html);
 
   $(`img`).each((i, el) => {
-    $(el).attr("src", `${astroBaseURL()}/assets${$(el).attr("src")}`);
+    $(el).attr("src", convertExt(`${astroBaseURL()}/assets${$(el).attr("src")}`));
   });
 
   const headings = Array.from($("h1, h2, h3, h4, h5, h6")).map((el) => {
