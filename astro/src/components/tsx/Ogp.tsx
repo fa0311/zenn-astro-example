@@ -69,7 +69,7 @@ export default (title: string) => {
                 overflow: "hidden",
               }}
             >
-              {SiteIcon({ text: import.meta.env.SITE_ICON })}
+              {SiteIcon({ text: import.meta.env.SITE_ICON_OGP })}
             </div>
             <p
               style={{

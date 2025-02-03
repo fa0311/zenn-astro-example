@@ -4,7 +4,7 @@ import { ImageResponse } from "@vercel/og";
 import Favicon from "../components/tsx/Favicon";
 
 export const GET: APIRoute = async () => {
-  const body = new ImageResponse(Favicon(import.meta.env.SITE_ICON), {
+  const body = new ImageResponse(Favicon(import.meta.env.SITE_ICON_OGP), {
     width: 64,
     height: 64,
   });
