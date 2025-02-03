@@ -21,7 +21,7 @@
     "@types/react": "^19.0.0",
     "@typescript-eslint/parser": "^8.20.0",
     "@vercel/og": "^0.6.4",
-    "astro": "^5.1.5",
+    "astro": "^5.2.3",
     "astro-google-analytics": "^1.0.3",
     "cheerio": "^1.0.0",
     "eslint": "^9.18.0",
@@ -34,6 +34,10 @@
     "sitemap": "^8.0.0",
     "tar": "^7.4.3",
     "zenn-markdown-html": "^0.1.158",
-    "zenn-model": "^0.1.158"
+    "zenn-model": "^0.1.158",
+    "imagemin": "^9.0.0",
+    "imagemin-webp": "^8.0.0",
+    "@types/imagemin": "^9.0.0",
+    "@types/imagemin-webp": "^7.0.0"
   }
 }
