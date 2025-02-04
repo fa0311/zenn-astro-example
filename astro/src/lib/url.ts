@@ -57,14 +57,3 @@ export const getZennUrl = () => {
     return new URL(`https://zenn.dev/${import.meta.env.ZENN_USER_NAME}`);
   }
 };
-
-export const getTwitterUrl = () => {
-  if (import.meta.env.TWITTER_USER_NAME !== undefined) {
-    return new URL(`https://twitter.com/${import.meta.env.TWITTER_USER_NAME}`);
-  }
-};
-export const getGitHubUrl = () => {
-  if (import.meta.env.GITHUB_USER_NAME !== undefined) {
-    return new URL(`https://github.com/${import.meta.env.GITHUB_USER_NAME}`);
-  }
-};

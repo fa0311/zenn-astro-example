@@ -17,12 +17,12 @@ export const GET: APIRoute = async ({ url }) => {
   });
 
   topics.forEach((topic) => {
-    sitemap.write({ url: `/topics/${topic}`, changefreq: "monthly", priority: 0.5 });
+    sitemap.write({ url: `/topics/${topic.name}`, changefreq: "monthly", priority: 0.5 });
     const data = articles.filter((article) => {
       return article.topics.some((t) => t.name === topic.name);
     });
     pageSplit(data).forEach(({ index }) => {
-      sitemap.write({ url: `/topics/${topic}/${index}`, changefreq: "monthly", priority: 0.5 });
+      sitemap.write({ url: `/topics/${topic.name}/${index}`, changefreq: "monthly", priority: 0.5 });
     });
   });
 

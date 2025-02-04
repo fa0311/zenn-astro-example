@@ -17,7 +17,7 @@ import Feed from "../components/icon/Feed.astro";
 import Github from "../components/icon/Github.astro";
 import Twitter from "../components/icon/Twitter.astro";
 import SiteIcon from "../components/SiteIcon.astro";
-import { astroURL, getGitHubUrl, getTwitterUrl, getZennUrl } from "../lib/url";
+import { astroURL, getZennUrl } from "../lib/url";
 
 const { title, description, type, keywords, ogp, robots, canonical, url, modifiedDate, publishedDate } = Astro.props;
 
@@ -27,13 +27,20 @@ const schema = {
   name: import.meta.env.SITE_NAME,
   headline: title,
   description: description,
-  keywords: keywords,
+  keywords: keywords.join(","),
   url: url ?? astroURL(Astro).url,
-  image: ogp ? ogp.href : astroURL(Astro).file("/ogp.png"),
+  image: {
+    "@type": "ImageObject",
+    name: title,
+    contentUrl: ogp?.href ?? astroURL(Astro).file("/ogp.png"),
+    width: ogp ? 1200 : 400,
+    height: ogp ? 630 : 400,
+  },
   author: {
     "@type": "Person",
     name: import.meta.env.SITE_AUTHOR_NAME,
     url: astroURL(Astro).dir("/"),
+    sameAs: getZennUrl(),
   },
   datePublished: publishedDate ?? modifiedDate ?? undefined,
   dateModified: modifiedDate ?? publishedDate ?? undefined,
@@ -41,7 +48,7 @@ const schema = {
     "@type": "WebPage",
     "@id": url ?? astroURL(Astro).url,
   },
-  sameAs: [getZennUrl(), getTwitterUrl(), getGitHubUrl()].filter((url) => url !== undefined),
+  sameAs: canonical,
 };
 ---
 
@@ -62,7 +69,13 @@ const schema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ja_JP" />
-    <meta property="og:image" content={ogp ? ogp.href : astroURL(Astro).file("/ogp.png")} />
+    <meta property="og:author" content={import.meta.env.SITE_AUTHOR_NAME} />
+    <meta property="og:section" content="Technology" />
+    <meta name="og:image" content={ogp?.href ?? astroURL(Astro).file("/ogp.png")} />
+    <meta name="og:image:width" content={ogp ? "1200" : "400"} />
+    <meta name="og:image:height" content={ogp ? "630" : "400"} />
+    <meta name="og:updated_time" content={modifiedDate?.toISOString()} />
+    <meta name="og:image:alt" content={title} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical ?? url ?? astroURL(Astro).url} />
     <link rel="sitemap" type="application/xml" href=`${ astroURL(Astro).file("/sitemap-index.xml")}` />

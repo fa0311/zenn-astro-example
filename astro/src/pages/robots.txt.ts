@@ -1,14 +1,20 @@
 import type { APIRoute } from "astro";
 import { astroURL } from "../lib/url";
 
-const getRobotsTxt = (sitemapURL: URL) => `
-User-agent: *
-Allow: /
+type RobotsKey = "User-agent" | "Disallow" | "Allow" | "Sitemap" | "Host" | "Crawl-delay";
 
-Sitemap: ${sitemapURL.href}
-`;
+const robots = (directives: [RobotsKey, string][][]) => {
+  return directives.map((data) => data.map(([key, value]) => `${key}: ${value}`).join("\n")).join("\n\n");
+};
 
 export const GET: APIRoute = ({ url }) => {
   const sitemapURL = astroURL({ url }).file("/sitemap-index.xml");
-  return new Response(getRobotsTxt(sitemapURL));
+  const robotsTxt = robots([
+    [
+      ["User-agent", "*"],
+      ["Allow", "/"],
+    ],
+    [["Sitemap", sitemapURL.href]],
+  ]);
+  return new Response(robotsTxt, { headers: { "Content-Type": "text/plain" } });
 };

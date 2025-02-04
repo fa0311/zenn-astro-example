@@ -26,6 +26,9 @@
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
   },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "biome.enabled": false,
 
   "markdown.preview.breaks": true,
