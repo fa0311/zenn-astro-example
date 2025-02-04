@@ -32,7 +32,7 @@ const schema = {
   image: {
     "@type": "ImageObject",
     name: title,
-    contentUrl: ogp?.href ?? astroURL(Astro).file("/ogp.png"),
+    url: ogp?.href ?? astroURL(Astro).file("/ogp.png"),
     width: ogp ? 1200 : 400,
     height: ogp ? 630 : 400,
   },
