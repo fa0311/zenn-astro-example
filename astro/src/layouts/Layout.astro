@@ -74,7 +74,7 @@ const schema = {
     <meta name="og:image" content={ogp?.href ?? astroURL(Astro).file("/ogp.png")} />
     <meta name="og:image:width" content={ogp ? "1200" : "400"} />
     <meta name="og:image:height" content={ogp ? "630" : "400"} />
-    <meta name="og:updated_time" content={modifiedDate?.toISOString()} />
+    {ogp && modifiedDate && <meta name="og:updated_time" content={modifiedDate.toISOString()} />}
     <meta name="og:image:alt" content={title} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical ?? url ?? astroURL(Astro).url} />
